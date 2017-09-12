@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RaSyEn Tests</title>
+</head>
+<body>
+    <h1>RaSyEn Tests</h1>
+
+    <div>
+        <ul>
+            <li>
+                <h3>Simple test</h3>
+                <p id="simple-test"></p>
+            </li>
+            <li>
+                <h3>Category test</h3>
+                <p id="category-test"></p>
+            </li>
+            <li>
+                <h3>Concatenation test</h3>
+                <p id="concatenation-test"></p>
+            </li>
+            <li>
+                <h3>Filter test</h3>
+                <p id="filter-test"></p>
+            </li>
+        </ul>
+        <p><a href="tests.html">Test Again.</a></p>
+    </div>
+<script src="rasyen.js"></script>
+<script>
+    
+    // Load lists
+    Rasyen.list_load("number",["one","two","three"]);
+    Rasyen.list_load("digit",["1","2","3"]);
+    Rasyen.list_load("color",{"hex":["#c00","#0c0","#00c"],"name":["red","green","blue"]});
+
+    // Start tests
+    document.getElementById('simple-test').innerHTML = Rasyen.parse('Random number: %number%');
+    document.getElementById('category-test').innerHTML = Rasyen.parse('Random color: %color@name%');
+    document.getElementById('concatenation-test').innerHTML = Rasyen.parse('Random number or digit: %number|digit%');
+    document.getElementById('filter-test').innerHTML = Rasyen.parse('Filter to upper: %number=to-upper%');
+</script>
+</body>
+</html>
