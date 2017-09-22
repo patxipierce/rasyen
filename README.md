@@ -139,6 +139,6 @@ Some other built in methods in Rasyen are:
     - `Rasyen.parse(string)`
         - The main parse method, will accept a string and return a string with the changed values if any.
 
-## You can see a RaSyEn demo [here](http://patxipierce.com/code/rasyen/).
+## You can see a RaSyEn demo [here](http://code.patxipierce.com/rasyen/tests.html).
 
 For a more complex demo that uses AJAX and a simple cache system for the lists see [this implementation](http://patxipierce.com/rpg/inspiration/).
