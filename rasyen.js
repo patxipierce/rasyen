@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.0
+*   RaSyEn - Random Syntax Engine v1.1
 *
 */
 var Rasyen = {
@@ -67,15 +67,45 @@ var Rasyen = {
     *   Helper functions
     */
 
+    // returns max and min inclusive random number
+    random_range : function(min, max){
+        if(typeof window.crypto == 'object'){
+            // Soooper cool random generation.
+            var range = max - min;
+            if (range <= 0) {
+                //max must be larger than min
+                return false;
+            }
+            var requestBytes = Math.ceil(Math.log2(range) / 8);
+            if (!requestBytes) { // No randomness required
+                return min;
+            }
+            var maxNum = Math.pow(256, requestBytes);
+            var ar = new Uint8Array(requestBytes);
+            while (true) {
+                window.crypto.getRandomValues(ar);
+                var val = 0;
+                for (var i = 0;i < requestBytes;i++) {
+                    val = (val << 8) + ar[i];
+                }
+                if (val + range - (val % range) < maxNum) {
+                    return min + (val % range);
+                }
+            }
+        }else{
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+    },
+
     //  Get Random Array Item.
     rai : function (items) {
-        return items[Math.floor(Math.random()*items.length)];
+        return items[ this.random_range(0,items.length) ];
     },
 
     //  Get Random Object Item.
     roi : function (obj) {
         var keys = Object.keys(obj);
-        return obj[keys[ keys.length * Math.random() << 0]];
+        return obj[keys[  this.random_range(0, keys.length) ]];
     },
 
     // Will select a random item or key recursively until it finds a string
