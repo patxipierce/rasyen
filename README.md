@@ -62,16 +62,16 @@ out =  Rasyen.parse("%adjective=to-upper=a-or-an%.");
 
 Pre-built filters are:
 
-    - `=to-lower`
-        - Sets the selected text to lower case.
-    - `=to-upper`
-        - Sets the selected text to upper case.
-    - `=first-to-lower`
-        - Sets the first letter of the selected text to lower case.
-    - `=first-to-upper`
-        - Sets the first letter of the selected text to upper case.
-    - `=a-or-an`
-        - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
+- `=to-lower`
+    - Sets the selected text to lower case.
+- `=to-upper`
+    - Sets the selected text to upper case.
+- `=first-to-lower`
+    - Sets the first letter of the selected text to lower case.
+- `=first-to-upper`
+    - Sets the first letter of the selected text to upper case.
+- `=a-or-an`
+    - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
 
 Custom filters can be built easily enough using the following technique.
 
@@ -110,34 +110,34 @@ Rasyen.filters['color'] = function(list){
 
 Some other built in methods in Rasyen are:
 
-    - `Rasyen.lists`
-        - Is the JavaScript Object where the loaded lists are stored.
-    - `Rasyen.callback`
-        - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing
-    - `Rasyen.filters`
-        - Is the object containing available filters such as =to-lower, =a-or-an, etc.
-    - `Rasyen.random_range(min, max)`
-        - Will use a cryptographic strength method to pick a number between min and max
-    - `Rasyen.rai(array)`
-        - Will choose a random array item
-    - `Rasyen.roi(object)`
-        - Will choose a random object item
-    - `Rasyen.random_str(object_or_array)`
-        - Will recursively select random items until it encounters a string
-    - `Rasyen.navigate_obj(array, object)`
-        - Will use the array as the keys to find an item in the object
-    - `Rasyen.list_load(name, object_or_array)`
-        - Loads a list with a given name
-    - `Rasyen.list_remove(name)`
-        - Removes a loaded list
-    - `Rasyen.list_get(name)`
-        - Will return the list of a name or false if it is not loaded
-    - `Rasyen.parse_tag(string)`
-        - Parses a single %tag% from a template and returns an object
-    - `Rasyen.parse_template(string)`
-        - Parses a single template with %tags% in it and returns an object.
-    - `Rasyen.parse(string)`
-        - The main parse method, will accept a string and return a string with the changed values if any.
+- `Rasyen.lists`
+    - Is the JavaScript Object where the loaded lists are stored.
+- `Rasyen.callback`
+    - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing
+- `Rasyen.filters`
+    - Is the object containing available filters such as =to-lower, =a-or-an, etc.
+- `Rasyen.random_range(min, max)`
+    - Will use a cryptographic strength method to pick a number between min and max
+- `Rasyen.rai(array)`
+    - Will choose a random array item
+- `Rasyen.roi(object)`
+    - Will choose a random object item
+- `Rasyen.random_str(object_or_array)`
+    - Will recursively select random items until it encounters a string
+- `Rasyen.navigate_obj(array, object)`
+    - Will use the array as the keys to find an item in the object
+- `Rasyen.list_load(name, object_or_array)`
+    - Loads a list with a given name
+- `Rasyen.list_remove(name)`
+    - Removes a loaded list
+- `Rasyen.list_get(name)`
+    - Will return the list of a name or false if it is not loaded
+- `Rasyen.parse_tag(string)`
+    - Parses a single %tag% from a template and returns an object
+- `Rasyen.parse_template(string)`
+    - Parses a single template with %tags% in it and returns an object.
+- `Rasyen.parse(string)`
+    - The main parse method, will accept a string and return a string with the changed values if any.
 
 ## You can see a RaSyEn demo [here](http://code.patxipierce.com/rasyen/tests.html).
 
