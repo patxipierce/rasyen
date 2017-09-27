@@ -1,45 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>RaSyEn Tests</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width" />
+
+    <link rel="shortcut icon" href="http://patxipierce.com/img/favicons/favicon.ico"/>
+
+    <title>RaSyEn - Random Syntax Engine Tests</title>
+
+    <meta name="description" content="RaSyEn is a Random Syntax Engine" />
+    <meta name="keywords" content="random generation, random syntax engine, random phrase generator" />
+
+    <style type="text/css">
+        body {
+            margin: 0; 
+            padding: 0;
+            color: #ddd;
+            font-family: Hack, "Andale Mono", "Lucida Console", Helvetica, Arial, monospace;
+            font-size: 90%;
+
+            background-color: #7d7e7d; /* Fallback */
+            background-image: -webkit-gradient(linear, left top, left bottom, from(#7d7e7d), to(#0e0e0e));
+            background-image: -webkit-linear-gradient(top, #7d7e7d 0%, #0e0e0e 100%);
+            background-image:    -moz-linear-gradient(top, #7d7e7d 0%, #0e0e0e 100%);
+            background-image:     -ms-linear-gradient(top, #7d7e7d 0%, #0e0e0e 100%);
+            background-image:      -o-linear-gradient(top, #7d7e7d 0%, #0e0e0e 100%);
+            background-image:         linear-gradient(to bottom, #7d7e7d 0%, #0e0e0e 100%);
+            
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+
+            min-height: 100%;
+        }
+        a { color: #fff; }
+        header pre { font-size: 9px; }
+        footer,
+        header { margin: 15px 0; background-color: #111; text-align: center; }
+        input { background-color: #111; color: #ddd; text-align: center; width: 100%; max-width: 320px; border: 1px solid #ddd; padding: 5px 0; }
+        button { padding: 15px 0; border-radius: 4px; font-size: 140%; width: 100%; background-color: #111; color: #ddd; border: 1px solid #ddd; cursor: pointer; }
+        button:hover { background-color: #444; color: #fff; }
+        header,
+        #main { padding: 2%; }
+        #tests { padding: 0; margin: 0; }
+        #tests li { text-align: center; border-bottom: 1px solid #aaa; list-style: none; }
+        #tests p { font-size: 140%; }
+        footer nav ul li { list-style: none; text-align: right; padding: 15px; }
+    </style>
 </head>
 <body>
-    <h1>RaSyEn Tests</h1>
 
-    <div>
-        <ul>
+    <div id="main">
+        <header>
+            <pre>__________          _________      ___________       
+\______   \_____   /   _____/__.__.\_   _____/ ____  
+ |       _/\__  \  \_____  <   |  | |    __)_ /    \ 
+ |    |   \ / __ \_/        \___  | |        \   |  \
+ |____|_  /(____  /_______  / ____|/_______  /___|  /
+        \/      \/        \/\/             \/     \/ </pre>
+
+            <h1>Random Syntax Engine Tests:</h1>
+        </header>
+        
+        <button onclick="test_all();">Test Again...</button>
+
+        <ul id="tests">
             <li>
                 <h3>Simple test</h3>
-                <p id="simple-test"></p>
+                <input type="text" id="simple-test-tpl" value="%number% %digit%">
+                <p id="simple-test-out"></p>
             </li>
             <li>
                 <h3>Category test</h3>
-                <p id="category-test"></p>
+                <input type="text" id="category-test-tpl" value="%geography@water% %geography@land%">
+                <p id="category-test-out"></p>
             </li>
             <li>
                 <h3>Concatenation test</h3>
-                <p id="concatenation-test"></p>
+                <input type="text" id="concatenation-test-tpl" value="%number|digit% %geography@water|geography@land%">
+                <p id="concatenation-test-out"></p>
             </li>
             <li>
                 <h3>Filter test</h3>
-                <p id="filter-test"></p>
+                <input type="text" id="filter-test-tpl" value="%number=to-upper% %geography@water=to-upper%">
+                <p id="filter-test-out"></p>
+            </li>
+            <li>
+                <h3>Custom Filter test</h3>
+                <input type="text" id="custom-filter-test-tpl" value=" %geography=plural%">
+                <p id="custom-filter-test-out"></p>
+            </li>
+            <li>
+                <h3>Automatic Filter test</h3>
+                <input type="text" id="auto-filter-test-tpl" value="%colours%">
+                <p id="auto-filter-test-out"></p>
             </li>
         </ul>
-        <p><a href="tests.html">Test Again.</a></p>
-    </div>
-<script src="rasyen.js"></script>
-<script>
-    
-    // Load lists
-    Rasyen.list_load("number",["one","two","three"]);
-    Rasyen.list_load("digit",["1","2","3"]);
-    Rasyen.list_load("color",{"hex":["#c00","#0c0","#00c"],"name":["red","green","blue"]});
 
-    // Start tests
-    document.getElementById('simple-test').innerHTML = Rasyen.parse('Random number: %number%');
-    document.getElementById('category-test').innerHTML = Rasyen.parse('Random color: %color@name%');
-    document.getElementById('concatenation-test').innerHTML = Rasyen.parse('Random number or digit: %number|digit%');
-    document.getElementById('filter-test').innerHTML = Rasyen.parse('Filter to upper: %number=to-upper%');
-</script>
+        <button onclick="test_all();">Test Again...</button>
+
+    </div>
+    <footer>
+        <nav>
+            <ul>
+                <li><a href="https://github.com/patxipierce/rasyen">Fork RaSyEn on Github.</a></li>
+            </ul>
+    </footer>
+
+    <script src="rasyen.js"></script>
+    <script>
+        // Load test lists
+        function load_lists(){
+            Rasyen.list_load( "number", ["one","two","three"]);
+            Rasyen.list_load( "digit", ["1","2","3"]);
+            Rasyen.list_load( "geography", { 
+                "water" : ["gulf","lake","river","sea","ocean"],
+                "land" : ["cliff","desert","canyon","mountain"]
+            });
+            Rasyen.list_load( "colours", [
+                    ["red", "#c00"],
+                    ["green", "#0c0"],
+                    ["blue", "#00c"]
+            ]);
+        }
+
+        function load_filters(){
+            // Load custom filters
+            Rasyen.filters['plural'] = function(list){
+                list.replace = list.replace+'s';
+                return list;
+            }
+
+            // The filter "colours" is called the same name as the "colours" list,
+            // so it will be applied automatically when the %colours% tag is called.
+            Rasyen.filters['colours'] = function(list){
+                if(typeof Rasyen.lists['colours'] !== 'undefined'){
+                    var color_list = Rasyen.list_get('colours');
+                    var col = Rasyen.rai(color_list);
+                    list.replace = '<span style="color:'+col[1]+';">'+col[0]+'</span>';
+                }
+                return list;
+            }
+        }
+
+        function test_all(){
+            // Array test
+            document.getElementById('simple-test-out').innerHTML = Rasyen.parse(document.getElementById('simple-test-tpl').value);
+
+            // Object test
+            document.getElementById('category-test-out').innerHTML = Rasyen.parse(document.getElementById('category-test-tpl').value);
+
+            // Combining lists
+            document.getElementById('concatenation-test-out').innerHTML = Rasyen.parse(document.getElementById('concatenation-test-tpl').value);
+
+            // Test filters    
+            document.getElementById('filter-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-test-tpl').value);
+
+            // Test custom filters
+            document.getElementById('custom-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('custom-filter-test-tpl').value);
+
+            // Test automatic list filters
+            document.getElementById('auto-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('auto-filter-test-tpl').value);
+        }
+
+        function rasyen_tests_init(){
+            load_lists();
+            load_filters();
+            test_all();   
+        }
+
+        window.onload = rasyen_tests_init;
+
+    </script>
 </body>
 </html>
