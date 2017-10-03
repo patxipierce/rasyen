@@ -106,7 +106,38 @@ Rasyen.filters['color'] = function(list){
     }
     return list;
 }
+
+// Now every time this list is called the function above will run.
+var out =  Rasyen.parse("%color%");
 ```
+
+You can even call a filter without a list. For example if you want a random number in a certain range you could use this.
+
+
+```
+// Will select a random number between two numbers.
+Rasyen.filters['range'] = function(list){
+    var ranges = [1,64]; // default random range
+
+    if(list.filter.length >= 2){
+        ranges = list.filter[1].split('-').map(function(x) {
+           return Number(x);
+        });
+    }
+    list.replace = Rasyen.random_range(ranges[0], ranges[1]);
+    return list;
+}
+
+// To get a random number between 2 and 24 you would do.
+var out =  Rasyen.parse("%=range=2-24%");
+
+```
+
+Note how in the example above we pass the random range numbers to the filter as if they were a filter call. There are many other ways to do this, but if you are going to be passing strings it is recommended that you pass parameters from the list instead as the use of reserved characters such as `|`,`=`, `@`, or `%` will be parsed.
+
+Another interesting thing you can do is filter nesting, where you parse a tag with a list that may or may not contain more tags.
+
+
 
 Some other built in methods in Rasyen are:
 

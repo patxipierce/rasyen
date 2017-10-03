@@ -95,10 +95,20 @@
                 <input type="text" id="auto-filter-test-tpl" value="%colours%">
                 <p id="auto-filter-test-out"></p>
             </li>
+            <li>
+                <h3>Filter alone test (with params)</h3>
+                <input type="text" id="filter-alone-test-tpl" value="%=range=2-24%">
+                <p id="filter-alone-test-out"></p>
+            </li>
+            <li>
+                <h3>Tag callback test</h3>
+                <input type="text" id="tag-callback-test-tpl" value="Its %animal=a-or-an%">
+                <p id="tag-callback-test-out"></p>
+            </li>
+            
         </ul>
 
         <button onclick="test_all();">Test Again...</button>
-
     </div>
     <footer>
         <nav>
@@ -109,67 +119,121 @@
 
     <script src="rasyen.js"></script>
     <script>
-        // Load test lists
-        function load_lists(){
-            Rasyen.list_load( "number", ["one","two","three"]);
-            Rasyen.list_load( "digit", ["1","2","3"]);
-            Rasyen.list_load( "geography", { 
-                "water" : ["gulf","lake","river","sea","ocean"],
-                "land" : ["cliff","desert","canyon","mountain"]
-            });
-            Rasyen.list_load( "colours", [
-                    ["red", "#c00"],
-                    ["green", "#0c0"],
-                    ["blue", "#00c"]
-            ]);
+    // Load test lists
+    function load_lists(){
+        Rasyen.list_load( "number", ["one","two","three"]);
+        Rasyen.list_load( "digit", ["1","2","3"]);
+        Rasyen.list_load( "geography", { 
+            "water" : ["gulf","lake","river","sea","ocean"],
+            "land" : ["cliff","desert","canyon","mountain"]
+        });
+        Rasyen.list_load( "colours", [
+                ["red", "#c00"],
+                ["green", "#0c0"],
+                ["blue", "#00c"]
+        ]);
+        Rasyen.list_load( "animal", [
+            "%colours% dog %animal%",
+            "%colours% cat",
+            "goat from the %geography@land%",
+            "goldfish from the %geography@water%"
+        ]);
+    }
+
+    // Load the filters
+    function load_filters(){
+        // Load custom filters
+        Rasyen.filters['plural'] = function(list){
+            list.replace = list.replace+'s';
+            return list;
         }
 
-        function load_filters(){
-            // Load custom filters
-            Rasyen.filters['plural'] = function(list){
-                list.replace = list.replace+'s';
-                return list;
+        // The filter "colours" is called the same name as the "colours" list,
+        // so it will be applied automatically when the %colours% tag is called.
+        Rasyen.filters['colours'] = function(list){
+            if(typeof Rasyen.lists['colours'] !== 'undefined'){
+                var color_list = Rasyen.list_get('colours');
+                var col = Rasyen.rai(color_list);
+                list.replace = '<span style="color:'+col[1]+';">'+col[0]+'</span>';
+            }
+            return list;
+        }
+
+        // Will select a random number between two numbers.
+        Rasyen.filters['range'] = function(list){
+            var ranges = [1,64]; // default random range
+
+            if(list.filter.length >= 2){
+                ranges = list.filter[1].split('-').map(function(x) {
+                   return Number(x);
+                });
+            }
+            list.replace = Rasyen.random_range(ranges[0], ranges[1]);
+            return list;
+        }
+    }
+
+    // Load all the callbacks
+    function load_callbacks(){
+
+        // Run on every tag of a template
+        Rasyen.callback.parse_tag = function(parsed){
+            
+            if(!parsed.output || typeof parsed.output != 'string'){
+                return parsed;
             }
 
-            // The filter "colours" is called the same name as the "colours" list,
-            // so it will be applied automatically when the %colours% tag is called.
-            Rasyen.filters['colours'] = function(list){
-                if(typeof Rasyen.lists['colours'] !== 'undefined'){
-                    var color_list = Rasyen.list_get('colours');
-                    var col = Rasyen.rai(color_list);
-                    list.replace = '<span style="color:'+col[1]+';">'+col[0]+'</span>';
-                }
-                return list;
+            // Ten tries to avoid circular parsing by parsing a tag 10 times before giving up.
+            var max_depth = 10;
+            var tags = parsed.output.match(/%(.*?)%/g);
+            for (var i = 0; i <= max_depth; i++) {
+                if(!tags) break;
+                parsed.output = Rasyen.parse(parsed.output);
+                tags = parsed.output.match(/%(.*?)%/g);
             }
+
+            return parsed;
         }
 
-        function test_all(){
-            // Array test
-            document.getElementById('simple-test-out').innerHTML = Rasyen.parse(document.getElementById('simple-test-tpl').value);
+    }
 
-            // Object test
-            document.getElementById('category-test-out').innerHTML = Rasyen.parse(document.getElementById('category-test-tpl').value);
+    function test_all(){
+        // Array test
+        document.getElementById('simple-test-out').innerHTML = Rasyen.parse(document.getElementById('simple-test-tpl').value);
 
-            // Combining lists
-            document.getElementById('concatenation-test-out').innerHTML = Rasyen.parse(document.getElementById('concatenation-test-tpl').value);
+        // Object test
+        document.getElementById('category-test-out').innerHTML = Rasyen.parse(document.getElementById('category-test-tpl').value);
 
-            // Test filters    
-            document.getElementById('filter-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-test-tpl').value);
+        // Combining lists
+        document.getElementById('concatenation-test-out').innerHTML = Rasyen.parse(document.getElementById('concatenation-test-tpl').value);
 
-            // Test custom filters
-            document.getElementById('custom-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('custom-filter-test-tpl').value);
+        // Test filters    
+        document.getElementById('filter-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-test-tpl').value);
 
-            // Test automatic list filters
-            document.getElementById('auto-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('auto-filter-test-tpl').value);
-        }
+        // Test custom filters
+        document.getElementById('custom-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('custom-filter-test-tpl').value);
 
-        function rasyen_tests_init(){
-            load_lists();
-            load_filters();
-            test_all();   
-        }
+        // Test automatic list filters
+        document.getElementById('auto-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('auto-filter-test-tpl').value);
 
-        window.onload = rasyen_tests_init;
+        // Test running filters with no list
+        document.getElementById('filter-alone-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-alone-test-tpl').value);
+
+        // Test callbacks
+        document.getElementById('tag-callback-test-out').innerHTML = Rasyen.parse(document.getElementById('tag-callback-test-tpl').value);
+    }
+
+    function rasyen_tests_init(){
+        load_lists();
+        
+        load_filters();
+
+        load_callbacks();
+
+        test_all();   
+    }
+
+    window.onload = rasyen_tests_init;
 
     </script>
 </body>
