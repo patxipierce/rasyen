@@ -115,6 +115,9 @@ You can even call a filter without a list. For example if you want a random numb
 
 
 ```
+// To get a random number between 2 and 24 you would do.
+var out =  Rasyen.parse("%=range=2-24%");
+
 // Will select a random number between two numbers.
 Rasyen.filters['range'] = function(list){
     var ranges = [1,64]; // default random range
@@ -127,17 +130,43 @@ Rasyen.filters['range'] = function(list){
     list.replace = Rasyen.random_range(ranges[0], ranges[1]);
     return list;
 }
-
-// To get a random number between 2 and 24 you would do.
-var out =  Rasyen.parse("%=range=2-24%");
-
 ```
 
 Note how in the example above we pass the random range numbers to the filter as if they were a filter call. There are many other ways to do this, but if you are going to be passing strings it is recommended that you pass parameters from the list instead as the use of reserved characters such as `|`,`=`, `@`, or `%` will be parsed.
 
 Another interesting thing you can do is filter nesting, where you parse a tag with a list that may or may not contain more tags.
 
+```
+// A list of things with tags of other lists
+Rasyen.list_load( "animal", [
+    "%colours% dog %animal%",
+    "%colours% cat",
+    "goat from the %geography@land%",
+    "goldfish from the %geography@water%"
+]);
 
+// Run on every tag of a template
+Rasyen.callback.parse_tag = function(parsed){
+    
+    if(!parsed.output || typeof parsed.output != 'string'){
+        return parsed;
+    }
+
+    // Ten tries to avoid circular parsing by parsing a tag 10 times before giving up.
+    var max_depth = 10;
+    var tags = parsed.output.match(/%(.*?)%/g);
+    for (var i = 0; i <= max_depth; i++) {
+        if(!tags) break;
+        parsed.output = Rasyen.parse(parsed.output);
+        tags = parsed.output.match(/%(.*?)%/g);
+    }
+
+    return parsed;
+}
+
+// Now every time this list is called the sub-tags will be parsed
+var out =  Rasyen.parse("Its %animal=a-or-an%");
+```
 
 Some other built in methods in Rasyen are:
 
