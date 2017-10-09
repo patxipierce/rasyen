@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.1
+*   RaSyEn - Random Syntax Engine v1.2
 *
 */
 var Rasyen = {
@@ -106,6 +106,12 @@ var Rasyen = {
     roi : function (obj) {
         var keys = Object.keys(obj);
         return obj[keys[  this.random_range(0, keys.length) ]];
+    },
+
+    // Get Random Object Key.
+    rok : function (obj) {
+        var keys = Object.keys(type);
+        return keys[ this.random_range(0, keys.length) ];
     },
 
     // Will select a random item or key recursively until it finds a string
