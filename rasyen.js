@@ -110,7 +110,7 @@ var Rasyen = {
 
     // Get Random Object Key.
     rok : function (obj) {
-        var keys = Object.keys(type);
+        var keys = Object.keys(obj);
         return keys[ this.random_range(0, keys.length) ];
     },
 
