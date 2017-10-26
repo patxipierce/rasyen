@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.2
+## RaSyEn - Random Syntax Engine v.1.3
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -110,6 +110,12 @@ Pre-built filters are:
     - Sets the first letter of the selected text to upper case.
 - `=a-or-an`
     - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
+- `=random-key`
+    - If the list has keys it will select one at random if not it will return a string (if any).
+- `=save`
+    - Allows saving the result to a key (see example below) for later usage.
+- `=key`
+    - Allows using a saved variable as list key (see example below).
 
 Custom filters can be built easily enough using the following technique.
 

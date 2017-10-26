@@ -10,6 +10,7 @@ var Rasyen = {
     */
 
     lists : {},
+    saved_keys : [],
     callback : {
         parse          : function(parsed){ return parsed; },
         parse_template : function(parsed){ return parsed; },
@@ -60,7 +61,51 @@ var Rasyen = {
                 list.replace = list.replace.toLowerCase();
             }
             return list;
-        }
+        },
+
+        // %list-name=random-key% - Chooses a Key from the list (must be an object)
+        'random-key' : function(list) {
+            if(Rasyen.lists.hasOwnProperty(list.name) 
+                && Rasyen.lists[list.name] instanceof Object
+                && Object.keys(Rasyen.lists[list.name]).length > 0){
+
+                list.replace = Rasyen.rok(Rasyen.lists[list.name]);
+            }
+            return list;
+        },
+
+        // %list-name=save=saved-list-name% - Saves a result into a temp list
+        'save' : function(list) {
+            if(typeof list.replace === 'string'){
+                var saved_key = list.filter[list.filter.indexOf('save')+1];
+                if(typeof saved_key == 'string'){
+                    Rasyen.saved_keys.push(saved_key);
+                    if(typeof Rasyen.lists[saved_key] == 'undefined'){
+                        Rasyen.lists[saved_key] = [];
+                    }
+                    Rasyen.lists[saved_key].push(list.replace);
+                }
+            }
+console.log(list, saved_key);
+            return list;
+        },
+
+        // %list-name=key=saved-list-name% - 
+        'key' : function(list) {
+            if(typeof list.replace === 'string'){
+                var saved_key = list.filter[list.filter.indexOf('key')+1];
+                if(typeof saved_key == 'string' && typeof Rasyen.lists[saved_key] == 'object'){
+                    var list_key = Rasyen.random_str(Rasyen.lists[saved_key]);
+
+                    if(typeof Rasyen.lists[list.name][list_key] == 'object'){
+//console.log(Rasyen.lists[list.name][saved_key]);
+                        list.replace = Rasyen.random_str(Rasyen.lists[list.name][list_key]);
+                    }
+                }
+            }
+console.log(list);
+            return list;
+        },
     },
 
     /*
@@ -85,7 +130,7 @@ var Rasyen = {
             while (true) {
                 window.crypto.getRandomValues(ar);
                 var val = 0;
-                for (var i = 0;i < requestBytes;i++) {
+                for (var i = 0; i < requestBytes; i++) {
                     val = (val << 8) + ar[i];
                 }
                 if (val + range - (val % range) < maxNum) {
@@ -294,6 +339,15 @@ var Rasyen = {
         }
 
         this.callback.parse(parsed_tpl);
+
+        // Reset saved keys if any
+        if(this.saved_keys.length){
+            for (var i = this.saved_keys.length - 1; i >= 0; i--) {
+                this.list_remove(this.saved_keys[i]);
+            }
+            this.saved_keys = [];
+        }
+
         return tpl;
     }
 }
