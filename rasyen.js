@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.2
+*   RaSyEn - Random Syntax Engine v1.3
 *
 */
 var Rasyen = {
@@ -408,7 +408,7 @@ var Rasyen = {
             }
         }
 
-        tpl = this.callback.parse(parsed_tpl);
+        this.callback.parse(parsed_tpl);
 
         // Reset saved keys if any
         if(this.saved_keys.length){
