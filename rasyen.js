@@ -11,6 +11,7 @@ var Rasyen = {
 
     lists : {},
     saved_keys : [],
+    removed_items : [],
     callback : {
         parse          : function(parsed){ return parsed; },
         parse_template : function(parsed){ return parsed; },
@@ -63,8 +64,8 @@ var Rasyen = {
             return list;
         },
 
-        // %list-name=random-key% - Chooses a Key from the list (must be an object)
-        'random-key' : function(list) {
+        // %list-name=random-category% - Chooses a Key from the list (must be an object)
+        'random-category' : function(list) {
             if(Rasyen.lists.hasOwnProperty(list.name) 
                 && Rasyen.lists[list.name] instanceof Object
                 && Object.keys(Rasyen.lists[list.name]).length > 0){
@@ -74,10 +75,10 @@ var Rasyen = {
             return list;
         },
 
-        // %list-name=save=saved-list-name% - Saves a result into a temp list
-        'save' : function(list) {
+        // %list-name=save-result=saved-list-name% - Saves a result into a temp list
+        'save-result' : function(list) {
             if(typeof list.replace === 'string'){
-                var saved_key = list.filter[list.filter.indexOf('save')+1];
+                var saved_key = list.filter[list.filter.indexOf('save-result')+1];
                 if(typeof saved_key == 'string'){
                     Rasyen.saved_keys.push(saved_key);
                     if(typeof Rasyen.lists[saved_key] == 'undefined'){
@@ -86,24 +87,27 @@ var Rasyen = {
                     Rasyen.lists[saved_key].push(list.replace);
                 }
             }
-console.log(list, saved_key);
             return list;
         },
 
-        // %list-name=key=saved-list-name% - 
-        'key' : function(list) {
-            if(typeof list.replace === 'string'){
-                var saved_key = list.filter[list.filter.indexOf('key')+1];
-                if(typeof saved_key == 'string' && typeof Rasyen.lists[saved_key] == 'object'){
-                    var list_key = Rasyen.random_str(Rasyen.lists[saved_key]);
-
-                    if(typeof Rasyen.lists[list.name][list_key] == 'object'){
-//console.log(Rasyen.lists[list.name][saved_key]);
-                        list.replace = Rasyen.random_str(Rasyen.lists[list.name][list_key]);
-                    }
+        // %list-name=category=saved-list-name% - will use %saved-list-name% string as a category in %list-name%
+        'category' : function(list) {
+            var saved_key = list.filter[list.filter.indexOf('category')+1];
+            if(typeof saved_key == 'string' && typeof Rasyen.lists[saved_key] == 'object'){
+                var list_key = Rasyen.random_str(Rasyen.lists[saved_key]);
+                if(typeof Rasyen.lists[list.name][list_key] == 'object'){
+                    list.categories = [list_key];
+                    list.replace = Rasyen.random_str(Rasyen.lists[list.name][list_key]);
                 }
             }
-console.log(list);
+            return list;
+        },
+
+        // %list-name=remove-result% - Removes the result from the given list
+        'remove-result' : function(list) {
+            if(typeof list.replace == 'string'){
+                Rasyen.list_remove_item(list.name, list.replace, list.categories);
+            }
             return list;
         },
     },
@@ -170,13 +174,79 @@ console.log(list);
     },
 
     // Takes an array of keys to an object and navigates using the array as keys to the object.
-    navigate_obj : function(arr, obj){
+    navigate_obj : function(obj, arr){
         var n = 0;
         while(obj.hasOwnProperty(arr[n])){
             obj = obj[arr[n]];
             n++;
         }
-        return obj;       
+        return obj;
+    },
+    
+    // Merges objects this.extend_obj(old, new, newer, newest, etc...);
+    extend_obj : function(){
+        for(var i = 1; i < arguments.length; i++) {
+            for(var key in arguments[i]) {
+                if(arguments[i].hasOwnProperty(key)) { 
+                    if (typeof arguments[0][key] === 'object'
+                    && typeof arguments[i][key] === 'object'){
+                        this.extend_obj(arguments[0][key], arguments[i][key]);
+                    }else{
+                        arguments[0][key] = arguments[i][key];
+                    }
+                }
+            }
+        }
+        return arguments[0];
+    },
+
+    replace_in_obj : function(old_obj, rep, arr){
+        // Convert arr to a deep object
+        var new_obj = temp = {};
+        for (var i = 0; i < arr.length; i++) {
+            if(arr.length - 1 == i){
+                temp = temp[arr[i]] = rep
+            }else{
+                temp = temp[arr[i]] = {}
+            }
+        }
+        // Merge with original object
+        return this.extend_obj(old_obj, new_obj);
+    },
+
+    // Removes an item from an existing list
+    list_remove_item : function(list_name, str, arr){
+        if(this.lists.hasOwnProperty(list_name)){
+            var data,
+            do_rebuild = false;
+
+            if(arr instanceof Array && this.lists[list_name] instanceof Object){
+                data = this.navigate_obj(this.lists[list_name], arr);
+                do_rebuild = true;
+            }else{
+                data = this.lists[list_name];
+            }
+
+            if(data instanceof Array){
+                var pos = data.indexOf(str);
+                if(pos != -1) {
+                    data.splice(pos, 1);
+
+                    // save item to re-insert it later
+                    Rasyen.removed_items.push({
+                        'path' : arr,
+                        'str'  : str,
+                        'pos'  : pos,
+                        'list_name' : list_name
+                    });
+                }
+            }
+
+            if(do_rebuild){
+                this.lists[list_name] = this.replace_in_obj(this.lists[list_name], data, arr);
+
+            }
+        }
     },
 
     /*
@@ -256,7 +326,7 @@ console.log(list);
             if(this.lists.hasOwnProperty(list.name)){
                 // Attempt to apply category if any...
                 if(list.categories){
-                    list.replace = this.random_str(this.navigate_obj(list.categories, this.lists[list.name]));
+                    list.replace = this.random_str(this.navigate_obj(this.lists[list.name], list.categories));
                 }else{
                     list.replace = this.random_str(this.lists[list.name]);
                 }
@@ -338,7 +408,7 @@ console.log(list);
             }
         }
 
-        this.callback.parse(parsed_tpl);
+        tpl = this.callback.parse(parsed_tpl);
 
         // Reset saved keys if any
         if(this.saved_keys.length){
@@ -346,6 +416,21 @@ console.log(list);
                 this.list_remove(this.saved_keys[i]);
             }
             this.saved_keys = [];
+        }
+        
+        // Add back any removed items if any
+        if(this.removed_items.length){
+            for(item in this.removed_items){
+                if(!item.hasOwnProperty(item)) continue;
+                
+                if(item.path && this.lists[item.list_name] instanceof Object){
+                    var data = this.navigate_obj(this.lists[item.list_name], item.path);
+                    data.splice(item.pos, 0, item.str);
+                    this.lists[item.list_name] = this.replace_in_obj(this.lists[item.list_name], data, item.path);
+                }else if(this.lists[item.list_name] instanceof Array){
+                    this.lists[item.list_name].splice(item.pos, 0, item.str);    
+                }
+            }
         }
 
         return tpl;

@@ -46,8 +46,14 @@ The methods built in Rasyen are:
     - Will choose a random object key
 - `Rasyen.random_str(object_or_array)`
     - Will recursively select random items until it encounters a string
-- `Rasyen.navigate_obj(array, object)`
+- `Rasyen.navigate_obj(object, array)`
     - Will use the array as the keys to find an item in the object
+- `Rasyen.extend_obj(old_obj, new_obj, newer_obj, etc)`
+    - Will recursively "deep merge" the objects that are passed to it
+- `Rasyen.replace_in_obj(old_obj, replace_arr, path_arr)`
+    - Will take any object and replace an array determined by the path array 
+- `Rasyen.list_remove_item(name, str, path_array)`
+    - Removes an item from a list temporarily
 - `Rasyen.list_load(name, object_or_array)`
     - Loads a list with a given name
 - `Rasyen.list_remove(name)`
@@ -110,14 +116,39 @@ Pre-built filters are:
     - Sets the first letter of the selected text to upper case.
 - `=a-or-an`
     - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
-- `=random-key`
-    - If the list has keys it will select one at random if not it will return a string (if any).
-- `=save`
+- `=random-category`
+    - If the list (javascript object) has keys (properties) it will select one at random if not it will return a string (if any).
+- `=save-result`
     - Allows saving the result to a key (see example below) for later usage.
-- `=key`
-    - Allows using a saved variable as list key (see example below).
+- `=category`
+    - Meant to be used with the save-result filter Allows using a saved variable as list key (see example below).
+- `=remove-result`
+    - Will remove the result from the list to it cannot appear again in other tag calls.
 
-Custom filters can be built easily enough using the following technique.
+Remember, filter order *matters* and they will be applied _from left to right_, so:
+
+```
+Rasyen.list_load("miss", ["Mrs","Miss"]);
+var out =  Rasyen.parse("title=to-lower=to-upper");
+// out -> "MISS" or "MRS"
+```
+
+The `=save-result`, `=remove-result`, and `=category` filters are a powerful way to use RaSyEn, lets say you are making a plot:
+
+```
+Rasyen.list_load("name", {"she":['Guinevere','Morgana','Janet'],"he":['Lancelot','Tam Lin','Arthur']});
+Rasyen.list_load("title", ["she","he"]);
+
+// Now every time this list is called the function above will run.
+var out =  Rasyen.parse("%title=remove-result=save-result=t1%, %name=category=t1=remove-result=save-result=n1% loved %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%, but %n2% loved %name=category=t1%.");
+
+// Possible outcome: "he, Lancelot loved she, Guinevere, but Guinevere loved Arthur."
+
+```
+
+The above works by removing the used title list result and saving it as `t1`, on the next tag we use the category filter to select a name using `t1`, remove it from the list and save it to `n1`. Now `t1` and `n1` are your keys for that character. Then we do the same with `t2` and `n2` calling `%n2%` directly. and since we know that `t1` is a category `n2` does not belong to we can call it as `%name=category=t1%`.
+
+Another cool thing are _Custom filters_, which can be built easily enough using the following technique.
 
 ```
 // The %list=smile% filter adds a smile to the selected word.
@@ -146,7 +177,7 @@ Rasyen.filters['color'] = function(list){
         var col_cat    = Rasyen.roi(color_list);
         
         if(list.categories){
-            col_cat = Rasyen.navigate_obj(list.categories, color_list);
+            col_cat = Rasyen.navigate_obj(color_list, list.categories);
         }
         
         var col = Rasyen.rai(col_cat);

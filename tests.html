@@ -82,7 +82,7 @@
             </li>
             <li>
                 <h3>Filter test</h3>
-                <input type="text" id="filter-test-tpl" value="%geography=random-key=save=saved-key% %saved-key=to-upper% %geography=key=saved-key%">
+                <input type="text" id="filter-test-tpl" value="%geography=random-category=save-result=saved-key% %saved-key=to-upper%  %geography=category=saved-key%">
                 <p id="filter-test-out"></p>
             </li>
             <li>
@@ -119,6 +119,7 @@
 
     <script src="rasyen.js"></script>
     <script>
+
     // Load test lists
     function load_lists(){
         Rasyen.list_load( "number", ["one","two","three"]);
