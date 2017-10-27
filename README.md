@@ -14,7 +14,7 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
 
 The most basic usage of RaSyEn could be like this.
 
-```
+```js
 // Load (list name, Array or Object)
 Rasyen.list_load("elf-1", ["Ae","Ara","Bal","...","Ylla","Zin","Zyl"]);
 Rasyen.list_load("elf-2", ["balar","can","...","yra","zorwyn","zumin"]);
@@ -72,7 +72,7 @@ The methods built in Rasyen are:
 
 Complex lists can be accessed by use of Categories (the object property name prefixed with the `@` character). They can be combined by using the `|` symbol and filtered with built in or custom filters.
 
-```
+```js
 // Load lists of Javascript Objects
 Rasyen.list_load("adjective", {
     "good" : ["happy","calm","nice"],
@@ -96,7 +96,7 @@ out =  Rasyen.parse("%name@male@hobbit|name@female% feels %adjective%.");
 
 You can also filter lists to do a specific thing with the random selection
 
-```
+```js
 // The first word will be Capitalized and the last one will be all in CAPS.
 out =  Rasyen.parse("%name=first-to-lower% feels %adjective=to-upper%.");
 
@@ -127,7 +127,7 @@ Pre-built filters are:
 
 Remember, filter order *matters* and they will be applied _from left to right_, so:
 
-```
+```js
 Rasyen.list_load("miss", ["Mrs","Miss"]);
 var out =  Rasyen.parse("title=to-lower=to-upper");
 // out -> "MISS" or "MRS"
@@ -135,7 +135,7 @@ var out =  Rasyen.parse("title=to-lower=to-upper");
 
 The `=save-result`, `=remove-result`, and `=category` filters are a powerful way to use RaSyEn, lets say you are making a plot:
 
-```
+```js
 Rasyen.list_load("name", {"she":['Guinevere','Morgana','Janet'],"he":['Lancelot','Tam Lin','Arthur']});
 Rasyen.list_load("title", ["she","he"]);
 
@@ -150,7 +150,7 @@ The above works by removing the used title list result and saving it as `t1`, on
 
 Another cool thing are _Custom filters_, which can be built easily enough using the following technique.
 
-```
+```js
 // The %list=smile% filter adds a smile to the selected word.
 Rasyen.filters['smile'] = function(list){
     list.replace = list.replace+' ^_^';
@@ -161,7 +161,7 @@ Rasyen.filters['smile'] = function(list){
 Or if you want to always filter a list you can just name the filter the same way as the list and it will be done automatically.
 
 
-```
+```js
 // Add a list with a strange layout
 Rasyen.list_load("color", { "crayola" : [
     ["almond", "#efdecd"], 
@@ -195,7 +195,7 @@ var out =  Rasyen.parse("%color%");
 You can even call a filter without a list. For example if you want a random number in a certain range you could use this.
 
 
-```
+```js
 // To get a random number between 2 and 24 you would do.
 var out =  Rasyen.parse("%=range=2-24%");
 
@@ -217,7 +217,7 @@ Note how in the example above we pass the random range numbers to the filter as 
 
 Another interesting thing you can do is filter nesting, where you parse a tag with a list that may or may not contain more tags.
 
-```
+```js
 // A list of things with tags of other lists
 Rasyen.list_load( "animal", [
     "%colours% dog %animal%",
