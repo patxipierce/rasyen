@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.3
+## RaSyEn - Random Syntax Engine v.1.4
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -124,6 +124,8 @@ Pre-built filters are:
     - Meant to be used with the save-result filter Allows using a saved variable as list key (see example below).
 - `=remove-result`
     - Will remove the result from the list to it cannot appear again in other tag calls.
+- `=meta`
+     - Evaluates the tag again to check for more tags in the result
 
 Remember, filter order *matters* and they will be applied _from left to right_, so:
 
@@ -215,7 +217,7 @@ Rasyen.filters['range'] = function(list){
 
 Note how in the example above we pass the random range numbers to the filter as if they were a filter call. There are many other ways to do this, but if you are going to be passing strings it is recommended that you pass parameters from the list instead as the use of reserved characters such as `|`,`=`, `@`, or `%` will be parsed.
 
-Another interesting thing you can do is filter nesting, where you parse a tag with a list that may or may not contain more tags.
+Another interesting thing you can do is filter nesting, where you parse a tag with a list that may or may not contain more tags. This will do the same as when using the `=meta` filter in a tag (you can see more about that in the demo).
 
 ```js
 // A list of things with tags of other lists
@@ -234,12 +236,12 @@ Rasyen.callback.parse_tag = function(parsed){
     }
 
     // Ten tries to avoid circular parsing by parsing a tag 10 times before giving up.
-    var max_depth = 10;
+    var max_depth = Rasyen.opts.max_recursion; // 10 by default
     var tags = parsed.output.match(/%(.*?)%/g);
     for (var i = 0; i <= max_depth; i++) {
-        if(!tags) break;
         parsed.output = Rasyen.parse(parsed.output);
         tags = parsed.output.match(/%(.*?)%/g);
+        if(!tags) break;
     }
 
     return parsed;

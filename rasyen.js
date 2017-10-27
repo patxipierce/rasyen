@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.3
+*   RaSyEn - Random Syntax Engine v1.4
 *
 */
 var Rasyen = {
@@ -12,6 +12,10 @@ var Rasyen = {
     lists : {},
     saved_keys : [],
     removed_items : [],
+    // Options
+    opts : {
+        max_recusrion : 10
+    },
     callback : {
         parse          : function(parsed){ return parsed; },
         parse_template : function(parsed){ return parsed; },
@@ -110,6 +114,23 @@ var Rasyen = {
             }
             return list;
         },
+
+        // %list-name=meta% - Evaluates the tag again to check for more tags in the result
+        'meta' : function(list){
+            var max = Rasyen.opts.max_recusrion;
+            var tags = list.replace.match(/%(.*?)%/g);
+
+            if(tags && tags.length){
+                for (var i = 0; i < max; i++) {
+                    list.replace = Rasyen.parse(list.replace);
+                    tags = list.replace.match(/%(.*?)%/g);
+                    if(!tags){
+                        break;
+                    }
+                }
+            }
+            return list;
+        }
     },
 
     /*
@@ -390,8 +411,10 @@ var Rasyen = {
             var tag = tags[i];
             parsed.parsed_tags.push(this.parse_tag(tag));
         }
-
-        return this.callback.parse_template(parsed);
+        
+        parsed = this.callback.parse_template(parsed);
+        
+        return parsed;
     },
 
     // The main parse function.
@@ -408,8 +431,16 @@ var Rasyen = {
             }
         }
 
-        this.callback.parse(parsed_tpl);
+        parsed_tpl = this.callback.parse(parsed_tpl);
+        
+        // Reset all list saved data and removed items
+        this.lists_reset();
 
+        return tpl;
+    },
+
+    // Restores saved and removed list to empty
+    lists_reset : function(){
         // Reset saved keys if any
         if(this.saved_keys.length){
             for (var i = this.saved_keys.length - 1; i >= 0; i--) {
@@ -432,7 +463,5 @@ var Rasyen = {
                 }
             }
         }
-
-        return tpl;
     }
 }
