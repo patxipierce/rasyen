@@ -212,7 +212,7 @@ var out =  Rasyen.parse(template); // => "Moth and moth."
 
 // Or combine filters
 
-out =  Rasyen.parse("%insect=to-lower=first-to-upper%."); // => "Mantis."
+out = Rasyen.parse("%insect=to-lower=first-to-upper%."); // => "Mantis."
 ```
 
 Remember, filter order *matters* and they will be applied **from left to right**, so:
@@ -228,7 +228,7 @@ Rasyen.list_load("title", [
 
 // Parse
 
-var out =  Rasyen.parse("%title=to-lower=to-upper%"); // => "MISS" or "MRS"
+var out = Rasyen.parse("%title=to-lower=to-upper%"); // => "MISS" or "MRS"
 ```
 
 Or use filters to do grammatical prefixing:
@@ -244,7 +244,7 @@ Rasyen.list_load("animal", [
 
 // Parse 
 
-var out =  Rasyen.parse("%animal=a-or-an%"); // => "a tiger" or "an ostrich"
+var out = Rasyen.parse("%animal=a-or-an%"); // => "a tiger" or "an ostrich"
 ```
 
 ### Using Categories and Combining Lists
@@ -327,7 +327,7 @@ var out      =  Rasyen.parse(template); // => "she was sad, she was always sad"
 // You can also remove items so they don't show up twice
 
 template = "%title=remove-result% knew %title% would do it";
-out =  Rasyen.parse(template); // => "she knew he would do it"
+out = Rasyen.parse(template); // => "she knew he would do it"
 ```
 
 ### Category Filter
@@ -391,7 +391,7 @@ var template = [
     "but %n2% loveth %name=category=t1%."
 ];
 
-var out =  Rasyen.parse(template.join(" "));
+var out = Rasyen.parse(template.join(" "));
 
 // Possible output => "he, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur."
 
@@ -448,7 +448,7 @@ Rasyen.filters['smile'] = function(list){
     list.replace = list.replace+' ^_^';
     return list;
 }
-var out =  Rasyen.parse("be %happy=smile%");
+var out = Rasyen.parse("be %happy=smile%");
 ```
 
 ### Per List Filters
@@ -486,7 +486,7 @@ Rasyen.filters['color'] = function(list){
 }
 
 // Now every time this list is called the function above will run.
-var out =  Rasyen.parse("%color%");
+var out = Rasyen.parse("%color%");
 ```
 
 ### Sans-list Filters
@@ -511,7 +511,7 @@ Rasyen.filters['range'] = function(list){
 
 // To get a random number between 2 and 24 you would do.
 
-var out =  Rasyen.parse("%=range=2-24%");
+var out = Rasyen.parse("%=range=2-24%");
 
 ```
 
@@ -592,7 +592,7 @@ Rasyen.callback.parse_tag = function(parsed){
 
 // Now every time this list is called the sub-tags will be parsed
 
-var out =  Rasyen.parse("Its %meta=a-or-an%");
+var out = Rasyen.parse("Its %meta=a-or-an%");
 ```
 
 
@@ -600,5 +600,5 @@ var out =  Rasyen.parse("Its %meta=a-or-an%");
 
 Check out these projects that use RaSyEn:
 
-    - [RaSyEn demo](http://code.patxipierce.com/rasyen/tests.html) tries to reproduce all of RaSyEn's features in a simple fashion.
-    - The [RPG inspiration generator](http://patxipierce.com/rpg/inspiration/) uses AJAX loaded lists to produce fantasy and sci-fi.
+- [RaSyEn demo](http://code.patxipierce.com/rasyen/tests.html) tries to reproduce all of RaSyEn's features in a simple fashion.
+- The [RPG inspiration generator](http://patxipierce.com/rpg/inspiration/) uses AJAX loaded lists to produce fantasy and sci-fi.
