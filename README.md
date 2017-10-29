@@ -12,6 +12,24 @@ __________          _________      ___________
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
+**Contents:**
+
+- [Demo](#demo)
+- [Documentation](#documentation)
+    - [Methods](#methods)
+    - [Containers and callbacks](#containers-and-callbacks)
+    - [Filters](#filters)
+- [Examples](#examples)
+    - [Basic filters](#basic-filters)
+    - [Using categories and combining lists](#using-categories-and-combining-lists)
+    - [Saving or removing a result](#saving-or-removing-a-result)
+    - [Category filter](#Category-filter)
+    - [All together now](#all-together-now)
+    - [Custom Filters](#custom-filters)
+    - [Per List Filters](#per-list-filters)
+    - [Sans-list Filters](#sans-list-filters)
+    - [Filter Nesting](#filter-nesting)
+
 The most basic usage of RaSyEn could look like this.
 
 ```js
@@ -75,6 +93,10 @@ You can see RaSyEn in action in the **online demo [here](http://code.patxipierce
 
 For a more complex demo that uses AJAX and a simple cache system for the lists see [this implementation](http://patxipierce.com/rpg/inspiration/).
 
+## Documentation
+
+Here you will find a brief description of all [methods](#methods), [containers](#containers-and-callbacks), [callbacks](#containers-and-callbacks) and [filters](#filters) in RaSyEn.
+
 ### Methods
 
 The methods built in Rasyen are:
@@ -112,7 +134,7 @@ The methods built in Rasyen are:
 - `Rasyen.parse(string)`
     - The main parse method, will accept a string and return a string with the changed values if any.
 
-### Containers
+### Containers and Callbacks
 
 RaSyEn contains several containers you can access directly if needed: 
 
@@ -171,6 +193,10 @@ Pre-built filters are:
 
 You can use filters on lists to do a specific thing with the randomly returned result.
 
+### Basic filters
+
+A filter is usually prefixed by a list name it applies to, so if your list is named _fruit_, its tag in the template would be "%fruit%" and to apply the _=to-upper_ filter you would add it to the tag resulting in `%fruit=to-upper%`.
+
 ```js
 // Add a list called "insect"
 
@@ -220,6 +246,8 @@ Rasyen.list_load("animal", [
 
 var out =  Rasyen.parse("%animal=a-or-an%"); // => "a tiger" or "an ostrich"
 ```
+
+### Using Categories and Combining Lists
 
 Complex lists can be accessed by use of _categories_, (the object property name) prefixed with the `@` character. 
 
@@ -303,7 +331,7 @@ template = "%title=remove-result% knew %title% would do it";
 out =  Rasyen.parse(template); // => "she knew he would do it"
 ```
 
-### Categories
+### Category Filter
 
 The property name in a javascript object is used as a category in RaSyEn. You can use `=random-category` to get a category as a result and apply it using the `=category` filter.
 
@@ -490,7 +518,7 @@ var out =  Rasyen.parse("Its %animal=a-or-an%");
 ```
 
 
-### Want more? 
+## Want more? 
 
 Check out these projects that use RaSyEn:
 
