@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.4
+*   RaSyEn - Random Syntax Engine v1.5
 *
 */
 var Rasyen = {
@@ -84,11 +84,7 @@ var Rasyen = {
             if(typeof list.replace === 'string'){
                 var saved_key = list.filter[list.filter.indexOf('save-result')+1];
                 if(typeof saved_key == 'string'){
-                    Rasyen.saved_keys.push(saved_key);
-                    if(typeof Rasyen.lists[saved_key] == 'undefined'){
-                        Rasyen.lists[saved_key] = [];
-                    }
-                    Rasyen.lists[saved_key].push(list.replace);
+                    Rasyen.list_save_item(list.replace, saved_key);
                 }
             }
             return list;
@@ -233,6 +229,14 @@ var Rasyen = {
         }
         // Merge with original object
         return this.extend_obj(old_obj, new_obj);
+    },
+
+    list_save_item : function(result, name){
+        this.saved_keys.push(name);
+        if(typeof this.lists[name] == 'undefined'){
+            this.lists[name] = [];
+        }
+        Rasyen.lists[name].push(result);
     },
 
     // Removes an item from an existing list

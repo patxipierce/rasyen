@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.4
+## RaSyEn - Random Syntax Engine v.1.5
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -55,7 +55,13 @@ var template = "%name% %action% %result%.";
 var out = Rasyen.parse(template);
 ```
 
-The phase _"Ben went fishing and then suddenly it all made sense."_ is one of many possibilities.
+The value of `out` could be...
+
+_"Ben went fishing and then suddenly it all made sense."_
+
+... Or any number of other combinations.
+
+### Demo
 
 You can see RaSyEn in action in the **online demo [here](http://code.patxipierce.com/rasyen/tests.html)**.
 
@@ -81,6 +87,8 @@ The methods built in Rasyen are:
     - Will recursively "deep merge" the objects that are passed to it
 - `Rasyen.replace_in_obj(old_obj, replace_arr, path_arr)`
     - Will take any object and replace an array determined by the path array 
+- `Rasyen.list_save_item(result, name)`
+    - Saves the result in a temporary list with the specified name
 - `Rasyen.list_remove_item(name, str, path_array)`
     - Removes an item from a list temporarily
 - `Rasyen.list_load(name, object_or_array)`
@@ -100,28 +108,28 @@ The methods built in Rasyen are:
 
 RaSyEn contains several containers you can access directly if needed: 
 
-- `Rasyen.lists` object
+- `Rasyen.lists` _object_
     - Is the JavaScript Object where the loaded lists (with the list_load() method) are stored.
-- `Rasyen.filters` object
+- `Rasyen.filters` _object_
     - Is the object containing available filters such as =to-lower, =a-or-an, etc.
-- `Rasyen.saved_keys` array
+- `Rasyen.saved_keys` _array_
     - The saved results from the `=save-result` filter are saved in this array.
-- `Rasyen.removed_items` array
+- `Rasyen.removed_items` _array_
     - The items removed from lists by the `=remove-result` filter are saved here.
-- `Rasyen.options` object
+- `Rasyen.options` _object_
     - The options container, as RaSyEn grows it will prove its worth.
-        - `Rasyen.options.max_recusrion`
+        - `Rasyen.options.max_recusrion` _number_
             -limits the amount of recursion to 10 when using the meta filter.
 
 You can also use these callback functions to edit core functionalities.
 
-- `Rasyen.callback` object
+- `Rasyen.callback` _object_
     - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing these are:
-        - `Rasyen.callback.parse_tag(data)` function
+        - `Rasyen.callback.parse_tag(data)` _function_
             - Called when a tag in a template is processed. Must always return the passed data.
-        - `Rasyen.callback.parse_template(data)` function
+        - `Rasyen.callback.parse_template(data)` _function_
             - Called once when a template is parsed. Must always return the passed data.
-        - `Rasyen.callback.parse(data)` function
+        - `Rasyen.callback.parse(data)` _function_
             - Called once after the parse method is called. Must always return the passed data.
 
 ### Filters
@@ -258,7 +266,7 @@ out =  Rasyen.parse("%name@male@hobbit|name@female% feels %adjective@good%.");
 
 ### Saving or Removing a Result
 
-The `=save-result`, `=remove-result`, lets say you are making a plot, you can save the name of your character and use it later again, or you can remove an item from a list so the template will never use the item twice.
+The `=save-result` and `=remove-result` let you save and remove an item from a list, let say you are making a plot, you can save the name of your character and use it later again, or you can remove an item from a list so the template will never use the item twice.
 
 ```js
 
@@ -307,8 +315,12 @@ Rasyen.list_load("house", {
 
 // Parse
 
-var template = "In the %house=random-category=save-result=room% there was a brave little %house=category=room%";
-var output   =  Rasyen.parse(template); // => "In the kitchen there was a brave little toaster"
+var template = [
+    "In the %house=random-category=save-result=room%",
+    "there was a brave little %house=category=room%";
+];
+
+var out = Rasyen.parse(template.join(" ")); // => "In the kitchen there was a brave little toaster";
 ```
 
 In the example above by saving the category name you can use it to select the pertinent list item further down the road.
@@ -327,7 +339,7 @@ var template = [
     "but %n2% loved %name=category=t1%."
 ];
 
-var out =  Rasyen.parse(join.template(" "));
+var out =  Rasyen.parse(template.join(" "));
 
 // Possible output => "he, Lancelot loved she, Guinevere, but Guinevere loved Arthur."
 

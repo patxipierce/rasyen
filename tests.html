@@ -221,11 +221,12 @@
 
 
     function show_lists(){
-
+        var first = true;
         function json_to_ul(obj, parent) {
             // Create the list element
             if(typeof parent == 'undefined'){
                 parent = document.createElement('ul');
+                first = parent;
             }
 
             if(obj instanceof Array){
@@ -237,7 +238,11 @@
                 for(key in obj){
                     if(!obj.hasOwnProperty(key)) continue;
                     var new_li = document.createElement('li');
-                    new_li.appendChild(document.createTextNode( key ));
+                    if(parent == first){
+                        new_li.appendChild(document.createTextNode( "%"+key+"%" ));
+                    }else{
+                        new_li.appendChild(document.createTextNode( "@"+key ));
+                    }
                     new_li.appendChild( json_to_ul(obj[key], document.createElement('ul')) );
                     parent.appendChild(new_li);
                 }
@@ -254,7 +259,6 @@
         }
 
         var lists = json_to_ul(Rasyen.lists);
- console.log(lists);
         document.getElementById('lists').appendChild(lists);
     }
 
