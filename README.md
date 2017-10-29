@@ -17,12 +17,20 @@ The most basic usage of RaSyEn could look like this.
 ```js
 // Load (list name, Array or Object)
 
-Rasyen.list_load("elf-1", ["Ae","Ara","Bal","...","Ylla","Zin","Zyl"]);
-Rasyen.list_load("elf-2", ["balar","can","...","yra","zorwyn","zumin"]);
+Rasyen.list_load("elf-1", [
+    "Ae","Ara","Bal","Ylla","Zin","Zyl"
+]);
+
+Rasyen.list_load("elf-2", [
+    "balar","can","yra","zorwyn","zumin"
+]);
 
 // Templates use tags like %list-name% to produce random output.
 
 var template = "Your elf name is %elf-1%%elf-2%.";
+
+// Parse the template
+
 var out = Rasyen.parse(template); // => "Your elf name is Arayra."
 ```
 
@@ -51,7 +59,7 @@ Rasyen.list_load("story", {
 
 // Parse three tags
 
-var template = "%name% %action% %result%.";
+var template = "%story@name% %story@action% %story@result%.";
 var out = Rasyen.parse(template);
 ```
 
