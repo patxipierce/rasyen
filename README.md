@@ -313,8 +313,12 @@ Rasyen.list_load("house", {
 
 // Parse
 
-var template = "In the %house=random-category=save-result=room% there was a brave little %house=category=room%";
-var output   =  Rasyen.parse(template); // => "In the kitchen there was a brave little toaster"
+var template = [
+    "In the %house=random-category=save-result=room%",
+    "there was a brave little %house=category=room%";
+];
+
+var out = Rasyen.parse(template.join(" ")); // => "In the kitchen there was a brave little toaster";
 ```
 
 In the example above by saving the category name you can use it to select the pertinent list item further down the road.
@@ -333,7 +337,7 @@ var template = [
     "but %n2% loved %name=category=t1%."
 ];
 
-var out =  Rasyen.parse(join.template(" "));
+var out =  Rasyen.parse(template.join(" "));
 
 // Possible output => "he, Lancelot loved she, Guinevere, but Guinevere loved Arthur."
 
