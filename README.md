@@ -57,7 +57,9 @@ var out = Rasyen.parse(template);
 
 The phase _"Ben went fishing and then suddenly it all made sense."_ is one of 27 possibilities.
 
-**You can see RaSyEn in action in the online demo [here](http://code.patxipierce.com/rasyen/tests.html).** For a more complex demo that uses AJAX and a simple cache system for the lists see [this implementation](http://patxipierce.com/rpg/inspiration/).
+You can see RaSyEn in action in the **online demo [here](http://code.patxipierce.com/rasyen/tests.html)**.
+
+For a more complex demo that uses AJAX and a simple cache system for the lists see [this implementation](http://patxipierce.com/rpg/inspiration/).
 
 ### Methods
 
@@ -147,6 +149,26 @@ Pre-built filters are:
 
 ## Examples:
 
+You can use filters on lists to do a specific thing with the randomly returned result.
+
+```js
+// Add a list called "insect"
+
+Rasyen.list_load("insect", [
+    "MOTH",
+    "MANTIS"
+]);
+
+// Parse
+
+var template = "%insect=first-to-upper% and %insect=to-lower%.";
+var out =  Rasyen.parse(template); // => "Moth and moth."
+
+// Or combine filters
+
+out =  Rasyen.parse("%insect=to-lower=first-to-upper%."); // => "Mantis."
+```
+
 Remember, filter order *matters* and they will be applied **from left to right**, so:
 
 ```js
@@ -229,19 +251,6 @@ var out = Rasyen.parse("%name@male% was feeling %adjective%.");
 
 out =  Rasyen.parse("%name@male@hobbit|name@female% feels %adjective@good%.");
 ```
-
-You can also filter lists to do a specific thing with the random selection
-
-```js
-// The first word will be Capitalized and the last one will be all in CAPS.
-
-out =  Rasyen.parse("%name=first-to-lower% feels %adjective=to-upper%.");
-
-// Or combine filters
-
-out =  Rasyen.parse("%adjective=to-upper=a-or-an%.");
-```
-
 
 ### Saving or Removing a Result
 
