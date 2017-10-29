@@ -100,28 +100,28 @@ The methods built in Rasyen are:
 
 RaSyEn contains several containers you can access directly if needed: 
 
-- `Rasyen.lists` object
+- `Rasyen.lists` _object_
     - Is the JavaScript Object where the loaded lists (with the list_load() method) are stored.
-- `Rasyen.filters` object
+- `Rasyen.filters` _object_
     - Is the object containing available filters such as =to-lower, =a-or-an, etc.
-- `Rasyen.saved_keys` array
+- `Rasyen.saved_keys` _array_
     - The saved results from the `=save-result` filter are saved in this array.
-- `Rasyen.removed_items` array
+- `Rasyen.removed_items` _array_
     - The items removed from lists by the `=remove-result` filter are saved here.
-- `Rasyen.options` object
+- `Rasyen.options` _object_
     - The options container, as RaSyEn grows it will prove its worth.
-        - `Rasyen.options.max_recusrion`
+        - `Rasyen.options.max_recusrion` _number_
             -limits the amount of recursion to 10 when using the meta filter.
 
 You can also use these callback functions to edit core functionalities.
 
-- `Rasyen.callback` object
+- `Rasyen.callback` _object_
     - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing these are:
-        - `Rasyen.callback.parse_tag(data)` function
+        - `Rasyen.callback.parse_tag(data)` _function_
             - Called when a tag in a template is processed. Must always return the passed data.
-        - `Rasyen.callback.parse_template(data)` function
+        - `Rasyen.callback.parse_template(data)` _function_
             - Called once when a template is parsed. Must always return the passed data.
-        - `Rasyen.callback.parse(data)` function
+        - `Rasyen.callback.parse(data)` _function_
             - Called once after the parse method is called. Must always return the passed data.
 
 ### Filters
