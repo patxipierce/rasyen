@@ -395,7 +395,7 @@ Rasyen.list_load("name", {
     ]
 });
 
-// Now save four characters as n1, n2, n3 and n4.
+// Now the template...
 
 var template = [
     "%title=remove-result=save-result=t1=first-to-upper%,",
@@ -416,9 +416,14 @@ var template = [
     "%n1% grew jealous of %n3%,",
     // => "Lancelot grew jealous of Arthur,"
 
-    "and plotted with %name=category=t2=save-result=n4% to forsake %adjective=category=t1%."
-    // => "and plotted with Morgana to forsake him."
+    "and plotted with %name=category=t2=save-result=n4%",
+    // => "and plotted with Morgana"
+
+    "to forsake %adjective=category=t1%."
+    // => "to forsake him."
 ];
+
+// Parse
 
 var out = Rasyen.parse(template.join(" "));
 ```
