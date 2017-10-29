@@ -363,7 +363,11 @@ In the example above by saving the category name you can use it to select the pe
 
 ### All together now
 
-Here is an advanced example that tries to show how powerful these filters can be:
+Here is an advanced example that tries to show how powerful these filters can be, lets say we want to produce a story where we can keep track of a set of characters, and use them later on in the same template. For example to produce a text similar to this.
+
+_"He, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur. Lancelot grew jealous of Arthur, and plotted with Morgana to forsake him."_
+
+We would have to do:
 
 ```js
 // Some basic syntax lists
@@ -394,11 +398,17 @@ Rasyen.list_load("name", {
 // Now save four characters as n1, n2, n3 and n4.
 
 var template = [
-    "%title=remove-result=save-result=t1=first-to-upper%, %name=category=t1=remove-result=save-result=n1%",
-    // => "He, Lancelot"
+    "%title=remove-result=save-result=t1=first-to-upper%,",
+    // => "He,"
 
-    "loveth %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,",
-    // => "loveth she, Guinevere,"
+    "%name=category=t1=remove-result=save-result=n1%",
+    // => "Lancelot"
+
+    "loveth %title=remove-result=save-result=t2%,",
+    // => "loveth she,"
+
+    "%name=category=t2=remove-result=save-result=n2%,",
+    // => "Guinevere,"
 
     "but %n2% loveth %name=category=t1=save-result=n3%.",
     // => "but Guinevere loveth Arthur."
@@ -413,7 +423,7 @@ var template = [
 var out = Rasyen.parse(template.join(" "));
 ```
 
-_"He, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur. Lancelot grew jealous of Arthur, and plotted with Morgana to forsake him."_
+
 
 In essence you now have four characters `n1`, `n2`, `n3` and `n4`, which you can use to add continuity to the narration. `n1` and `n3` are the same gender, and `n2` and `n4` are plotting against `n1`
 
