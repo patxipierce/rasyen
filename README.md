@@ -55,7 +55,7 @@ var template = "%name% %action% %result%.";
 var out = Rasyen.parse(template);
 ```
 
-The phase _"Ben went fishing and then suddenly it all made sense."_ is one of 27 possibilities.
+The phase _"Ben went fishing and then suddenly it all made sense."_ is one of many possibilities.
 
 You can see RaSyEn in action in the **online demo [here](http://code.patxipierce.com/rasyen/tests.html)**.
 
@@ -102,14 +102,6 @@ RaSyEn contains several containers you can access directly if needed:
 
 - `Rasyen.lists` object
     - Is the JavaScript Object where the loaded lists (with the list_load() method) are stored.
-- `Rasyen.callback` object
-    - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing these are:
-        - `Rasyen.callback.parse_tag(data)` function
-            - Called when a tag in a template is processed. Must always return the passed data.
-        - `Rasyen.callback.parse_template(data)` function
-            - Called once when a template is parsed. Must always return the passed data.
-        - `Rasyen.callback.parse(data)` function
-            - Called once after the parse method is called. Must always return the passed data.
 - `Rasyen.filters` object
     - Is the object containing available filters such as =to-lower, =a-or-an, etc.
 - `Rasyen.saved_keys` array
@@ -118,7 +110,19 @@ RaSyEn contains several containers you can access directly if needed:
     - The items removed from lists by the `=remove-result` filter are saved here.
 - `Rasyen.options` object
     - The options container, as RaSyEn grows it will prove its worth.
-        - `Rasyen.options.max_recusrion` limits the amount
+        - `Rasyen.options.max_recusrion`
+            -limits the amount of recursion to 10 when using the meta filter.
+
+You can also use these callback functions to edit core functionalities.
+
+- `Rasyen.callback` object
+    - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing these are:
+        - `Rasyen.callback.parse_tag(data)` function
+            - Called when a tag in a template is processed. Must always return the passed data.
+        - `Rasyen.callback.parse_template(data)` function
+            - Called once when a template is parsed. Must always return the passed data.
+        - `Rasyen.callback.parse(data)` function
+            - Called once after the parse method is called. Must always return the passed data.
 
 ### Filters
 
