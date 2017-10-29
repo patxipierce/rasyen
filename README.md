@@ -362,13 +362,20 @@ In the example above by saving the category name you can use it to select the pe
 
 ### All together now
 
-Here is an advanced example, to try and frame how powerful these filters can be:
+Here is an advanced example that tries to show how powerful these filters can be:
 
 ```js
+// Some basic syntax lists
+
 Rasyen.list_load("title", [
     "he",
     "she"
 ]);
+
+Rasyen.list_load("adjective", {
+    "he" : "him",
+    "she" : "her",
+});
 
 Rasyen.list_load("name", {
     "he" : [
@@ -383,21 +390,29 @@ Rasyen.list_load("name", {
     ]
 });
 
-// Now every time this list is called the function above will run.
+// Now save four characters as n1, n2, n3 and n4.
 
-var template = [
-    "%title=remove-result=save-result=t1%, %name=category=t1=remove-result=save-result=n1%",
-    "loveth %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,",
-    "but %n2% loveth %name=category=t1%."
-];
+var template = ["%title=remove-result=save-result=t1=first-to-upper%, %name=category=t1=remove-result=save-result=n1%"];
+// => "He, Lancelot"
+
+template.push("loveth %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,");
+// => "loveth she, Guinevere,"
+
+template.push("but %n2% loveth %name=category=t1=save-result=n3%.");
+// => "but Guinevere loveth Arthur."
+
+template.push("%n1% grew jealous of %n3%,");
+// => "Lancelot grew jealous of Arthur,"
+
+template.push("and plotted with %name=category=t2=save-result=n4% to forsake %adjective=category=t1%.");
+// => "and plotted with Morgana to forsake him."
 
 var out = Rasyen.parse(template.join(" "));
-
-// Possible output => "he, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur."
-
 ```
 
-The above works by removing the used title list result and saving it as `t1`, on the next tag we use the category filter to select a name using `t1`, remove it from the list and save it to `n1`. Now `t1` and `n1` are your keys for that character. Then we do the same with `t2` and `n2` calling `%n2%` directly. and since we know that `t1` is a category `n2` does not belong to we can call it as `%name=category=t1%`.
+_"He, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur. Lancelot grew jealous of Arthur, and plotted with Morgana to forsake him."_
+
+In essence you now have four characters `n1`, `n2`, `n3` and `n4`, which you can use to add continuity to the narration. `n1` and `n3` are the same gender, and `n2` and `n4` are plotting against `n1`
 
 The `=meta` can be useful for making combined syntax, using the first example:
 
@@ -423,8 +438,12 @@ Rasyen.list_load("elf", {
     "name" : "%elf@a%%elf@b%" // For use with the =meta filter
 });
 
-// Templates use %tags% with the list name.
-var out = Rasyen.parse("Your elf name is %elf@name=meta%."); // => "Your elf name is Arayra."
+var template = "Your elf name is %elf@name=meta%."; // => "Your elf name is Arayra."
+
+// Or store the name as %elf-name%
+template = "This elf is called %elf@name=meta=save-result=elf-name%.";
+
+var out = Rasyen.parse(template); // => "Your elf name is Arayra."
 ```
 This looks like the first example, with a key difference, now that you are using only one tag you can save it using the `=save-result` filter.
 
