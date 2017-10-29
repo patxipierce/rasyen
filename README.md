@@ -55,11 +55,13 @@ var template = "%name% %action% %result%.";
 var out = Rasyen.parse(template);
 ```
 
-The value of `out` is now the phrase:
+The value of `out` could be...
 
 _"Ben went fishing and then suddenly it all made sense."_
 
-Which is one of many possibilities.
+... Or any number of other combinations.
+
+### Demo
 
 You can see RaSyEn in action in the **online demo [here](http://code.patxipierce.com/rasyen/tests.html)**.
 
