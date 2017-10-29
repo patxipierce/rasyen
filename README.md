@@ -25,6 +25,7 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
     - [Saving or removing a result](#saving-or-removing-a-result)
     - [Category filter](#Category-filter)
     - [All together now](#all-together-now)
+    - [The meta filter](#the-meta-filter)
     - [Custom filters](#custom-filters)
     - [Per list filters](#per-list-filters)
     - [Sans-list filters](#sans-list-filters)
@@ -392,20 +393,22 @@ Rasyen.list_load("name", {
 
 // Now save four characters as n1, n2, n3 and n4.
 
-var template = ["%title=remove-result=save-result=t1=first-to-upper%, %name=category=t1=remove-result=save-result=n1%"];
-// => "He, Lancelot"
+var template = [
+    "%title=remove-result=save-result=t1=first-to-upper%, %name=category=t1=remove-result=save-result=n1%",
+    // => "He, Lancelot"
 
-template.push("loveth %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,");
-// => "loveth she, Guinevere,"
+    "loveth %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,",
+    // => "loveth she, Guinevere,"
 
-template.push("but %n2% loveth %name=category=t1=save-result=n3%.");
-// => "but Guinevere loveth Arthur."
+    "but %n2% loveth %name=category=t1=save-result=n3%.",
+    // => "but Guinevere loveth Arthur."
 
-template.push("%n1% grew jealous of %n3%,");
-// => "Lancelot grew jealous of Arthur,"
+    "%n1% grew jealous of %n3%,",
+    // => "Lancelot grew jealous of Arthur,"
 
-template.push("and plotted with %name=category=t2=save-result=n4% to forsake %adjective=category=t1%.");
-// => "and plotted with Morgana to forsake him."
+    "and plotted with %name=category=t2=save-result=n4% to forsake %adjective=category=t1%."
+    // => "and plotted with Morgana to forsake him."
+];
 
 var out = Rasyen.parse(template.join(" "));
 ```
@@ -414,7 +417,11 @@ _"He, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur. Lancelot grew
 
 In essence you now have four characters `n1`, `n2`, `n3` and `n4`, which you can use to add continuity to the narration. `n1` and `n3` are the same gender, and `n2` and `n4` are plotting against `n1`
 
-The `=meta` can be useful for making combined syntax, using the first example:
+### The Meta Filter
+
+What if you want to use lists in your lists?
+
+The `=meta` filter can be useful for making combined syntax.
 
 ```js
 
