@@ -55,7 +55,11 @@ var template = "%name% %action% %result%.";
 var out = Rasyen.parse(template);
 ```
 
-The phase _"Ben went fishing and then suddenly it all made sense."_ is one of many possibilities.
+The value of `out` is now the phrase:
+
+_"Ben went fishing and then suddenly it all made sense."_
+
+Which is one of many possibilities.
 
 You can see RaSyEn in action in the **online demo [here](http://code.patxipierce.com/rasyen/tests.html)**.
 
