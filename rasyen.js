@@ -13,7 +13,7 @@ var Rasyen = {
     saved_keys : [],
     removed_items : [],
     // Options
-    opts : {
+    options : {
         max_recusrion : 10
     },
     callback : {
@@ -117,7 +117,7 @@ var Rasyen = {
 
         // %list-name=meta% - Evaluates the tag again to check for more tags in the result
         'meta' : function(list){
-            var max = Rasyen.opts.max_recusrion;
+            var max = Rasyen.options.max_recusrion;
             var tags = list.replace.match(/%(.*?)%/g);
 
             if(tags && tags.length){
