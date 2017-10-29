@@ -25,27 +25,27 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
     - [Saving or removing a result](#saving-or-removing-a-result)
     - [Category filter](#Category-filter)
     - [All together now](#all-together-now)
-    - [Custom Filters](#custom-filters)
-    - [Per List Filters](#per-list-filters)
-    - [Sans-list Filters](#sans-list-filters)
-    - [Filter Nesting](#filter-nesting)
+    - [Custom filters](#custom-filters)
+    - [Per list filters](#per-list-filters)
+    - [Sans-list filters](#sans-list-filters)
+    - [Filter nesting](#filter-nesting)
 
 The most basic usage of RaSyEn could look like this.
 
 ```js
 // Load (list name, Array or Object)
 
-Rasyen.list_load("elf-1", [
+Rasyen.list_load("first-part", [
     "Ae","Ara","Bal","Ylla","Zin","Zyl"
 ]);
 
-Rasyen.list_load("elf-2", [
+Rasyen.list_load("second-part", [
     "balar","can","yra","zorwyn","zumin"
 ]);
 
 // Templates use tags like %list-name% to produce random output.
 
-var template = "Your elf name is %elf-1%%elf-2%.";
+var template = "Your elf name is %first-part%%second-part%.";
 
 // Parse the template
 
@@ -195,7 +195,7 @@ You can use filters on lists to do a specific thing with the randomly returned r
 
 ### Basic filters
 
-A filter is usually prefixed by a list name it applies to, so if your list is named _fruit_, its tag in the template would be "%fruit%" and to apply the _=to-upper_ filter you would add it to the tag resulting in `%fruit=to-upper%`.
+A filter is usually prefixed by a list name it applies to, so if your list is named _fruit_ containing a single item _banana_, its tag in the template would be "%fruit%" and to apply the _=to-upper_ filter you would add it to the tag resulting in `%fruit=to-upper%` which would produce _BANANA_.
 
 ```js
 // Add a list called "insect"
@@ -291,13 +291,12 @@ Rasyen.list_load("name", {
 
 
 // Parse
-
-var out = Rasyen.parse("%name@male% was feeling %adjective%.");
-// Possible output => "Gandalf was feeling happy."
+var template = "%name@male% was feeling %adjective%.";
+var out = Rasyen.parse(template); // => "Gandalf was feeling happy."
 
 // Combine male hobbit names and female using the "|" pipe character
 
-out =  Rasyen.parse("%name@male@hobbit|name@female% feels %adjective@good%.");
+out = Rasyen.parse("%name@male@hobbit|name@female% feels %adjective@good%.");
 ```
 
 ### Saving or Removing a Result
@@ -353,7 +352,7 @@ Rasyen.list_load("house", {
 
 var template = [
     "In the %house=random-category=save-result=room%",
-    "there was a brave little %house=category=room%";
+    "there was a brave little %house=category=room%"
 ];
 
 var out = Rasyen.parse(template.join(" ")); // => "In the kitchen there was a brave little toaster";
@@ -366,18 +365,35 @@ In the example above by saving the category name you can use it to select the pe
 Here is an advanced example, to try and frame how powerful these filters can be:
 
 ```js
+Rasyen.list_load("title", [
+    "he",
+    "she"
+]);
+
+Rasyen.list_load("name", {
+    "he" : [
+        "Lancelot",
+        "Arthur",
+        "Tam Lin"
+    ],
+    "she" : [
+        "Guinevere",
+        "Morgana",
+        "Janet"
+    ]
+});
 
 // Now every time this list is called the function above will run.
 
 var template = [
     "%title=remove-result=save-result=t1%, %name=category=t1=remove-result=save-result=n1%",
-    "loved %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,",
-    "but %n2% loved %name=category=t1%."
+    "loveth %title=remove-result=save-result=t2%, %name=category=t2=remove-result=save-result=n2%,",
+    "but %n2% loveth %name=category=t1%."
 ];
 
 var out =  Rasyen.parse(template.join(" "));
 
-// Possible output => "he, Lancelot loved she, Guinevere, but Guinevere loved Arthur."
+// Possible output => "he, Lancelot loveth she, Guinevere, but Guinevere loveth Arthur."
 
 ```
 
@@ -386,16 +402,29 @@ The above works by removing the used title list result and saving it as `t1`, on
 The `=meta` can be useful for making combined syntax, using the first example:
 
 ```js
+
 // Load (list name, Array or Object)
 Rasyen.list_load("elf", {
-    "a" : ["Ae","Ara","Bal","...","Ylla","Zin","Zyl"],
-    "b" : ["balar","can","...","yra","zorwyn","zumin"]
-    "name" : "%elf@a%%elf@b%"
+    "a" : [
+        "Ae",
+        "Ara",
+        "Bal",
+        "Ylla",
+        "Zin",
+        "Zyl"
+    ],
+    "b" : [
+        "balar",
+        "can",
+        "yra",
+        "zorwyn",
+        "zumin"
+    ],
+    "name" : "%elf@a%%elf@b%" // For use with the =meta filter
 });
 
 // Templates use %tags% with the list name.
-var out = Rasyen.parse("Your elf name is %elf@name=meta%.");
-console.log(out); // -> Possible output "Your elf name is Arayra."
+var out = Rasyen.parse("Your elf name is %elf@name=meta%."); // => "Your elf name is Arayra."
 ```
 This looks like the first example, with a key difference, now that you are using only one tag you can save it using the `=save-result` filter.
 
@@ -404,11 +433,22 @@ This looks like the first example, with a key difference, now that you are using
 Another cool thing are _custom filters_, which can be built easily enough using the following technique.
 
 ```js
-// The %list=smile% filter adds a smile to the selected word.
+
+// Load a list called happy
+
+Rasyen.list_load("happy", [
+    "happy",
+    "joyful",
+    "gay"
+]);
+
+// The %happy=smile% filter adds a smile to the selected word.
+
 Rasyen.filters['smile'] = function(list){
     list.replace = list.replace+' ^_^';
     return list;
 }
+var out =  Rasyen.parse("be %happy=smile%");
 ```
 
 ### Per List Filters
@@ -455,10 +495,6 @@ You can even call a filter without a list. For example if you want a random numb
 
 ```js
 
-// To get a random number between 2 and 24 you would do.
-
-var out =  Rasyen.parse("%=range=2-24%");
-
 // A filter to select a random number in a range of numbers.
 
 Rasyen.filters['range'] = function(list){
@@ -472,23 +508,65 @@ Rasyen.filters['range'] = function(list){
     list.replace = Rasyen.random_range(ranges[0], ranges[1]);
     return list;
 }
+
+// To get a random number between 2 and 24 you would do.
+
+var out =  Rasyen.parse("%=range=2-24%");
+
 ```
 
 Note how in the example above we pass the random range numbers to the filter as if they were a filter call. There are many other ways to do this, but if you are going to be passing strings it is recommended that you pass parameters from the list instead as the use of reserved characters such as `|`,`=`, `@`, or `%` will be parsed.
 
 ### Filter Nesting
 
-Another interesting thing you can do is filter nesting, where you parse a tag with a list that may or may not contain more tags. This will do the same as when using the `=meta` filter in a tag, except it will now happen in all templates parsed.
+Another interesting thing you can do is filter nesting, where you parse a tag with a list item that may or may not contain more tags. This example uses a callback that will do the same as when using the `=meta` filter in a tag, except it will now happen in all templates parsed.
 
 ```js
 
-// A list of things with tags of other lists in is items
+// Load a color, geography and animal list
 
-Rasyen.list_load( "animal", [
-    "%colours% dog %animal%", // <= this could be a problem
-    "%colours% cat",
-    "goat from the %geography@land%",
-    "goldfish from the %geography@water%"
+Rasyen.list_load( "color", [
+    "black",
+    "white",
+    "brown",
+    "green"
+]);
+
+Rasyen.list_load( "geography", { 
+    "water" : [
+        "gulf",
+        "lake",
+        "river",
+        "sea",
+        "ocean"
+    ],
+    "land" : [
+        "cliff",
+        "desert",
+        "canyon",
+        "mountain"
+    ]
+});
+
+Rasyen.list_load( "animal", {
+    "land": [
+        "dog",
+        "cat",
+        "goat"
+    ],
+    "water": [
+        "goldfish",
+        "swordfish"
+    ]
+});
+
+// Now load a special meta list
+
+Rasyen.list_load( "meta", [
+    "%color% %animal% and a %meta%", // calling %meta% in meta
+    "%color% %animal%",
+    "%animal% that is %color%",
+    "%animal@water% from %geography@water%"
 ]);
 
 // Use a callback to run this function on every tag of a parsed template.
@@ -501,7 +579,7 @@ Rasyen.callback.parse_tag = function(parsed){
 
     // To avoid a circular reference buckle there is a maximum recursion limit.
 
-    var max_depth = Rasyen.opts.max_recursion; // 10 by default
+    var max_depth = Rasyen.options.max_recursion; // 10 by default
     var tags = parsed.output.match(/%(.*?)%/g);
     for (var i = 0; i <= max_depth; i++) {
         parsed.output = Rasyen.parse(parsed.output);
@@ -514,7 +592,7 @@ Rasyen.callback.parse_tag = function(parsed){
 
 // Now every time this list is called the sub-tags will be parsed
 
-var out =  Rasyen.parse("Its %animal=a-or-an%");
+var out =  Rasyen.parse("Its %meta=a-or-an%");
 ```
 
 
