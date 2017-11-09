@@ -35,15 +35,15 @@
         }
         a { color: #fff; }
         header pre { font-size: 9px; }
-        footer,
-        header { margin: 15px 0; background-color: #111; text-align: center; }
+        footer,header { text-align: center; }
         input { background-color: #111; color: #ddd; text-align: center; width: 100%; max-width: 320px; border: 1px solid #ddd; padding: 5px 0; }
-        button { padding: 15px 0; border-radius: 4px; font-size: 140%; width: 100%; background-color: #111; color: #ddd; border: 1px solid #ddd; cursor: pointer; }
+        button { padding: 15px 0; border-radius: 4px; font-size: 140%; width: 75%; background-color: #111; color: #ddd; border: 1px solid #ddd; cursor: pointer; }
         button:hover { background-color: #444; color: #fff; }
-        header,
-        #main { padding: 2%; }
+        header, section, footer { background-color: #111; margin: 2%; padding: 2%; }
+        .button-box { text-align: center; }
         #tests { padding: 0; margin: 0; }
         #tests li { text-align: center; border-bottom: 1px solid #aaa; list-style: none; }
+        #tests li:last-of-type { border-bottom: none; }
         #tests h3 { text-decoration: underline; }
         #tests p:before{ content: 'Result: "'; }
         #tests p { font-size: 140%; }
@@ -60,27 +60,30 @@
 </head>
 <body>
 
-    <div id="main">
-        <header>
-            <pre>__________          _________      ___________       
+    <header>
+        <pre>__________          _________      ___________       
 \______   \_____   /   _____/__.__.\_   _____/ ____  
- |       _/\__  \  \_____  <   |  | |    __)_ /    \ 
- |    |   \ / __ \_/        \___  | |        \   |  \
- |____|_  /(____  /_______  / ____|/_______  /___|  /
-        \/      \/        \/\/             \/     \/ </pre>
+|       _/\__  \  \_____  <   |  | |    __)_ /    \ 
+|    |   \ / __ \_/        \___  | |        \   |  \
+|____|_  /(____  /_______  / ____|/_______  /___|  /
+    \/      \/        \/\/             \/     \/ </pre>
 
-            <h1>RaSyEn - Random Syntax Engine</h1>
-            <p>Test file demonstration</p>
-        </header>
+        <h1>RAndom SYntax ENgine</h1>
+    </header>
 
-        <section>        
-            <h2>List data in use:</h2>
+    <section>
+
+        <h2>Tests demonstration - <span id="rasyen-version"></span></h2>
+        
+        <article>
+            <h3>List data in use:</h3>
 
             <div id="lists"></div>
+        </article>
+        <article>
+            <h3>The tests:</h3>
 
-            <h2>The tests:</h2>
-
-            <button onclick="test_all();">Test Again...</button>
+            <p class="button-box"><button onclick="test_all();">Test Again...</button></p>
 
             <!-- The templates are in the values of the inputs of the list below -->
             
@@ -112,7 +115,7 @@
                 </li>
                 <li>
                     <h3>Custom Filter test</h3>
-                    <input type="text" id="custom-filter-test-tpl" value=" %geography=plural%">
+                    <input type="text" id="custom-filter-test-tpl" value="%geography=plural%">
                     <p id="custom-filter-test-out"></p>
                 </li>
                 <li>
@@ -141,9 +144,11 @@
                 </li>
             </ul>
 
-            <button onclick="test_all();">Test Again...</button>
-        </section>
-    </div>
+            <p class="button-box"><button onclick="test_all();">Test Again...</button></p>
+
+        </article>
+    </section>
+
     <footer>
         <nav>
             <ul>
@@ -153,6 +158,11 @@
 
     <script src="rasyen.js"></script>
     <script>
+
+    // Loads version
+    function load_version(){
+        document.getElementById('rasyen-version').innerHTML = 'version '+Rasyen.version;
+    }
 
     // Load test lists
     function load_lists(){
@@ -307,12 +317,20 @@
         document.getElementById('tag-meta-test-out').innerHTML = Rasyen.parse(document.getElementById('tag-meta-test-tpl').value);
     }
 
+    /**
+    *   Start tests
+    **/
     function rasyen_tests_init(){
-        // Load
+        // Start
+        load_version();
+
+        // Load data
         load_lists();
         
+        // Load custom data filters
         load_filters();
 
+        // Load callbacks
         load_callbacks();
         
         // Start
@@ -321,6 +339,10 @@
         test_all();
     }
 
+    window.onload = rasyen_tests_init;
+    </script>
+
+    <script type="text/javascript">
     /**
     *
     *   Not essential demo code
@@ -368,9 +390,6 @@
         var lists = json_to_ul(Rasyen.lists);
         document.getElementById('lists').appendChild(lists);
     }
-
-    // Play ball!
-    window.onload = rasyen_tests_init;
 
     </script>
 </body>

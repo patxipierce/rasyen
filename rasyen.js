@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.6
+*   RaSyEn - Random Syntax Engine v1.7
 *
 */
 var Rasyen = {
@@ -8,7 +8,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '1.6',
+    version : '1.7',
     lists : {},
     saved_keys : [],
     removed_items : [],

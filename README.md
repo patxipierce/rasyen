@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.6
+## RaSyEn - Random Syntax Engine v.1.7
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -124,7 +124,7 @@ The methods built in Rasyen are:
     - Removes an item from a list temporarily
 - `Rasyen.list_load(name, object_or_array)`
     - Loads a list with a given name
-- `Rasyen.list_load(object_of_lists)`
+- `Rasyen.lists_load(object_of_lists)`
     - Loads an object where each key is the list name, and its value is the list data
 - `Rasyen.list_remove(name)`
     - Removes a loaded list
