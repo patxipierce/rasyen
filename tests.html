@@ -44,8 +44,11 @@
         #main { padding: 2%; }
         #tests { padding: 0; margin: 0; }
         #tests li { text-align: center; border-bottom: 1px solid #aaa; list-style: none; }
+        #tests h3 { text-decoration: underline; }
+        #tests p:before{ content: 'Result: "'; }
         #tests p { font-size: 140%; }
-
+        #tests p:after{ content: '"'; }
+        
         ul.inline > li { display: inline; }
         ul.inline > li:after { content: '", "'; }
         ul.inline > li:first-of-type:before { content:'["'; }
@@ -153,30 +156,59 @@
 
     // Load test lists
     function load_lists(){
-        Rasyen.list_load( "number", ["one","two","three"]);
-        Rasyen.list_load( "digit", ["1","2","3"]);
-        Rasyen.list_load( "geography", { 
-            "water" : ["gulf","lake","river","sea","ocean"],
-            "land" : ["cliff","desert","canyon","mountain"]
+        Rasyen.lists_load({
+            "number": [
+                "one",
+                "two",
+                "three"
+            ],
+            "digit": [
+                "1",
+                "2",
+                "3"
+            ],
+            "geography": {
+                "water": [
+                    "gulf",
+                    "lake",
+                    "river",
+                    "sea",
+                    "ocean"
+                ],
+                "land": [
+                    "cliff",
+                    "desert",
+                    "canyon",
+                    "mountain"
+                ]
+            },
+            "kung-fu": [
+                "blind mantis fist",
+                "drunken master style",
+                "angry tiger style",
+                "spinning ostrich kick"
+            ],
+            "colours": [
+                [
+                    "red",
+                    "#c00"
+                ],
+                [
+                    "green",
+                    "#0c0"
+                ],
+                [
+                    "blue",
+                    "#00c"
+                ]
+            ],
+            "animal": [
+                "%colours% dog and %animal=a-or-an%",
+                "%colours% cat",
+                "goat from the %geography@land%",
+                "goldfish from the %geography@water%"
+            ]
         });
-        Rasyen.list_load("kung-fu", [
-            "blind mantis fist",
-            "drunken master style",
-            "angry tiger style",
-            "spinning ostrich kick"
-        ]);
-
-        Rasyen.list_load( "colours", [
-                ["red", "#c00"],
-                ["green", "#0c0"],
-                ["blue", "#00c"]
-        ]);
-        Rasyen.list_load( "animal", [
-            "%colours% dog and %animal=a-or-an%",
-            "%colours% cat",
-            "goat from the %geography@land%",
-            "goldfish from the %geography@water%"
-        ]);
     }
 
     // Load the filters

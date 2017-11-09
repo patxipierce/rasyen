@@ -124,6 +124,8 @@ The methods built in Rasyen are:
     - Removes an item from a list temporarily
 - `Rasyen.list_load(name, object_or_array)`
     - Loads a list with a given name
+- `Rasyen.list_load(object_of_lists)`
+    - Loads an object where each key is the list name, and its value is the list data
 - `Rasyen.list_remove(name)`
     - Removes a loaded list
 - `Rasyen.list_get(name)`
@@ -131,9 +133,9 @@ The methods built in Rasyen are:
 - `Rasyen.parse_tag(string)`
     - Parses a single %tag% from a template and returns an object
 - `Rasyen.parse_template(string)`
-    - Parses a single template with %tags% in it and returns an object.
+    - Parses a single template with %tags% in it and returns an object
 - `Rasyen.parse(string)`
-    - The main parse method, will accept a string and return a string with the changed values if any.
+    - The main parse method, will accept a string and return a string with the changed values if any
 
 ### Containers and Callbacks
 
@@ -272,41 +274,43 @@ Complex lists can be accessed by use of _categories_, (the object property name)
 And lists can be combined in the same tag by using the `|` symbol and filtered with built in or custom filters.
 
 ```js
-// The "adjective" list contains categories "good" and "bad"
 
-Rasyen.list_load("adjective", {
-    "good" : [
-        "happy",
-        "calm",
-        "nice"
-    ],
-    "bad"  : [
-        "lazy",
-        "tired"
-    ]
-});
-
-// The "name" list
-
-Rasyen.list_load("name", {
-    "male"  : {
-        "hobbit" : [
-            "Bilbo",
-            "Frodo",
-            "Sam"
+// Load lists as json object
+Rasyen.lists_load({
+    
+    // The "adjective" list contains categories "good" and "bad"
+    "adjective" : {
+        "good" : [
+            "happy",
+            "calm",
+            "nice"
         ],
-        "other"  : [
-            "Gandalf",
-            "Tom Bombadil",
-            "Aragorn"
+        "bad"  : [
+            "lazy",
+            "tired"
         ]
     },
-    "female" : [
-        "Galadriel",
-        "Goldberry"
-    ]
-});
 
+    // The "name" list
+    "name" : {
+        "male"  : {
+            "hobbit" : [
+                "Bilbo",
+                "Frodo",
+                "Sam"
+            ],
+            "other"  : [
+                "Gandalf",
+                "Tom Bombadil",
+                "Aragorn"
+            ]
+        },
+        "female" : [
+            "Galadriel",
+            "Goldberry"
+        ]
+    }
+});
 
 // Parse
 var template = "%name@male% was feeling %adjective%.";
@@ -324,17 +328,16 @@ The `=save-result` and `=remove-result` let you save and remove an item from a l
 ```js
 
 // We add our lists
-
-Rasyen.list_load("feeling", [
-    "sad",
-    "happy",
-]);
-
-Rasyen.list_load("title", [
-    "she",
-    "he"
-]);
-
+Rasyen.lists_load({
+    "feeling" : [
+        "sad",
+        "happy"
+    ],
+    "title" : [
+        "she",
+        "he"
+    ]
+});
 
 // Save title to "t1" and feeling to "f1" and use them later
 
@@ -388,28 +391,27 @@ We would have to do:
 
 ```js
 // Some basic syntax lists
-
-Rasyen.list_load("title", [
-    "he",
-    "she"
-]);
-
-Rasyen.list_load("adjective", {
-    "he" : "him",
-    "she" : "her",
-});
-
-Rasyen.list_load("name", {
-    "he" : [
-        "Lancelot",
-        "Arthur",
-        "Tam Lin"
+Rasyen.lists_load({
+    "title" : [
+        "he",
+        "she"
     ],
-    "she" : [
-        "Guinevere",
-        "Morgana",
-        "Janet"
-    ]
+    "adjective" : {
+        "he" : "him",
+        "she" : "her"
+    },
+    "name" : {
+        "he" : [
+            "Lancelot",
+            "Arthur",
+            "Tam Lin"
+        ],
+        "she" : [
+            "Guinevere",
+            "Morgana",
+            "Janet"
+        ]
+    }
 });
 
 // Now the template...
@@ -582,41 +584,41 @@ Another interesting thing you can do is filter nesting, where you parse a tag wi
 ```js
 
 // Load a color, geography and animal list
-
-Rasyen.list_load( "color", [
-    "black",
-    "white",
-    "brown",
-    "green"
-]);
-
-Rasyen.list_load( "geography", { 
-    "water" : [
-        "gulf",
-        "lake",
-        "river",
-        "sea",
-        "ocean"
+Rasyen.lists_load({
+    "color" : [
+        "black",
+        "white",
+        "brown",
+        "green"
     ],
-    "land" : [
-        "cliff",
-        "desert",
-        "canyon",
-        "mountain"
-    ]
+    "geography" : { 
+        "water" : [
+            "gulf",
+            "lake",
+            "river",
+            "sea",
+            "ocean"
+        ],
+        "land" : [
+            "cliff",
+            "desert",
+            "canyon",
+            "mountain"
+        ]
+    },
+    "animal" : {
+        "land": [
+            "dog",
+            "cat",
+            "goat"
+        ],
+        "water": [
+            "goldfish",
+            "swordfish"
+        ]
+    }
 });
 
-Rasyen.list_load( "animal", {
-    "land": [
-        "dog",
-        "cat",
-        "goat"
-    ],
-    "water": [
-        "goldfish",
-        "swordfish"
-    ]
-});
 
 // Now load a special meta list
 

@@ -319,6 +319,14 @@ var Rasyen = {
         }
     },
 
+    // Loads multiple lists into RaSyEn
+    lists_load : function(lists_obj){
+        for(list_name in lists_obj){
+            if(!lists_obj.hasOwnProperty(list_name)) continue;
+            this.list_load(list_name, lists_obj[list_name]);
+        }
+    },
+
     // Where list_name is a string with the list to remove
     list_remove : function(list_name){
         if(this.lists.hasOwnProperty(list_name)){
