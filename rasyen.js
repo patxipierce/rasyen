@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.5
+*   RaSyEn - Random Syntax Engine v1.6
 *
 */
 var Rasyen = {
@@ -8,7 +8,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-
+    version : '1.6',
     lists : {},
     saved_keys : [],
     removed_items : [],
@@ -30,7 +30,7 @@ var Rasyen = {
 
         // %list-name=a-or-an% - Returns A or An, depending on input.
         'a-or-an' : function (list){
-            if(typeof list.replace === 'string'){
+            if(typeof list.replace === 'string' && list.replace !== ''){
                 list.replace = 'a'+(('aeiou'.indexOf(list.replace.charAt(0).toLowerCase()) == -1) ? '' : 'n')+' '+list.replace;
             }
             return list;
@@ -38,7 +38,7 @@ var Rasyen = {
 
         // %list-name=first-to-upper% - Capitalize the first letter
         'first-to-upper' : function(list) {
-            if(typeof list.replace === 'string'){ 
+            if(typeof list.replace === 'string' && list.replace !== ''){ 
                 list.replace = list.replace.charAt(0).toUpperCase() + list.replace.slice(1);
             }
             return list;
@@ -46,7 +46,7 @@ var Rasyen = {
 
         // %list-name=first-to-lower% - Lower the first letter
         'first-to-lower' : function(list) {
-            if(typeof list.replace === 'string'){ 
+            if(typeof list.replace === 'string' && list.replace !== ''){ 
                 list.replace = list.replace.charAt(0).toLowerCase() + list.replace.slice(1)
             }
             return list;
@@ -54,7 +54,7 @@ var Rasyen = {
 
         // %list-name=to-lower% - All to upper
         'to-upper' : function(list) {
-            if(typeof list.replace === 'string'){ 
+            if(typeof list.replace === 'string' && list.replace !== ''){ 
                 list.replace = list.replace.toUpperCase();
             }
             return list;
@@ -62,8 +62,39 @@ var Rasyen = {
 
         // %list-name=to-lower% - All to lower
         'to-lower' : function(list) {
-            if(typeof list.replace === 'string'){ 
+            if(typeof list.replace === 'string' && list.replace !== ''){ 
                 list.replace = list.replace.toLowerCase();
+            }
+            return list;
+        },
+
+        // %list-name=words=first-to-upper% - Apply a filter to each word
+        'words' : function(list) {            
+            if( typeof list.replace === 'string' && list.replace.length !== ''){
+                
+                // Get parameter
+                var idx = list.filter.indexOf('words') + 1;
+
+                if(list.filter.length >= idx){
+                    var params = list.filter.slice(idx * -1);
+
+                    list.replace = list.replace.split(' ').map(function(w){
+                        for (var i = 0; i < params.length; i++) {
+                            if(Rasyen.filters.hasOwnProperty(params[i])){  
+                
+                                // Fake a list object to do the filtering. 
+                                w = Rasyen.filters[params[i]]({
+                                    name : list.name,
+                                    categories : list.categories, 
+                                    replace : w,
+                                    filter : params[i]
+                                }).replace;
+                            }                        
+                        }
+                        return w;
+                    }).join(' ');
+                
+                }
             }
             return list;
         },

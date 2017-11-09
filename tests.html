@@ -45,7 +45,13 @@
         #tests { padding: 0; margin: 0; }
         #tests li { text-align: center; border-bottom: 1px solid #aaa; list-style: none; }
         #tests p { font-size: 140%; }
+
         ul.inline > li { display: inline; }
+        ul.inline > li:after { content: '", "'; }
+        ul.inline > li:first-of-type:before { content:'["'; }
+        ul.inline > li:last-of-type:after { content:'"]'; }
+        ul.inline > li:first-of-type:before { content:'["'; }
+        
         footer nav ul li { list-style: none; text-align: right; padding: 15px; }
     </style>
 </head>
@@ -60,16 +66,21 @@
  |____|_  /(____  /_______  / ____|/_______  /___|  /
         \/      \/        \/\/             \/     \/ </pre>
 
-            <h1>Random Syntax Engine Tests:</h1>
+            <h1>RaSyEn - Random Syntax Engine</h1>
+            <p>Test file demonstration</p>
         </header>
 
         <section>        
-            <h2>List data in use:</h2>        
+            <h2>List data in use:</h2>
+
             <div id="lists"></div>
 
+            <h2>The tests:</h2>
 
             <button onclick="test_all();">Test Again...</button>
 
+            <!-- The templates are in the values of the inputs of the list below -->
+            
             <ul id="tests">
                 <li>
                     <h3>Simple test</h3>
@@ -90,6 +101,11 @@
                     <h3>Filter test</h3>
                     <input type="text" id="filter-test-tpl" value="%geography@water=to-upper% %geography@land=first-to-upper%">
                     <p id="filter-test-out"></p>
+                </li>
+                <li>
+                    <h3>Filter parameter test</h3>
+                    <input type="text" id="filter-param-test-tpl" value="%kung-fu=words=first-to-upper%">
+                    <p id="filter-param-test-out"></p>
                 </li>
                 <li>
                     <h3>Custom Filter test</h3>
@@ -143,13 +159,20 @@
             "water" : ["gulf","lake","river","sea","ocean"],
             "land" : ["cliff","desert","canyon","mountain"]
         });
+        Rasyen.list_load("kung-fu", [
+            "blind mantis fist",
+            "drunken master style",
+            "angry tiger style",
+            "spinning ostrich kick"
+        ]);
+
         Rasyen.list_load( "colours", [
                 ["red", "#c00"],
                 ["green", "#0c0"],
                 ["blue", "#00c"]
         ]);
         Rasyen.list_load( "animal", [
-            "%colours% dog %animal%",
+            "%colours% dog and %animal=a-or-an%",
             "%colours% cat",
             "goat from the %geography@land%",
             "goldfish from the %geography@water%"
@@ -219,16 +242,68 @@
         }
     }
 
+    // Parse the content of the text inputs
+    function test_all(){
+        // Array test
+        document.getElementById('simple-test-out').innerHTML = Rasyen.parse(document.getElementById('simple-test-tpl').value);
+
+        // Object test
+        document.getElementById('category-test-out').innerHTML = Rasyen.parse(document.getElementById('category-test-tpl').value);
+
+        // Combining lists
+        document.getElementById('concatenation-test-out').innerHTML = Rasyen.parse(document.getElementById('concatenation-test-tpl').value);
+
+        // Test filters    
+        document.getElementById('filter-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-test-tpl').value);
+
+        // Test parameter filters    
+        document.getElementById('filter-param-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-param-test-tpl').value);
+
+        // Test custom filters
+        document.getElementById('custom-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('custom-filter-test-tpl').value);
+
+        // Test automatic list filters
+        document.getElementById('auto-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('auto-filter-test-tpl').value);
+
+        // Test filters    
+        document.getElementById('filter-save-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-save-test-tpl').value);
+
+        // Test running filters with no list
+        document.getElementById('filter-alone-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-alone-test-tpl').value);
+
+        // Test meta filter
+        document.getElementById('tag-meta-test-out').innerHTML = Rasyen.parse(document.getElementById('tag-meta-test-tpl').value);
+    }
+
+    function rasyen_tests_init(){
+        // Load
+        load_lists();
+        
+        load_filters();
+
+        load_callbacks();
+        
+        // Start
+        show_lists();
+
+        test_all();
+    }
+
+    /**
+    *
+    *   Not essential demo code
+    *
+    **/
 
     function show_lists(){
 
+        // Recursively creates an unordered list
         function json_to_ul(obj, parent) {
             // Create the list element
             if(typeof parent == 'undefined'){
                 parent = document.createElement('ul');
                 first = parent;
             }
-
             if(obj instanceof Array){
                 parent.className = "inline";
                 for(var i = 0; i < obj.length; i++) {
@@ -251,7 +326,7 @@
                 // does not check for other wonderful js types 
                 parent.appendChild(
                     document.createElement('span').appendChild(
-                        document.createTextNode( '"'+obj+'",' )
+                        document.createTextNode( obj )
                     )
                 );
             }
@@ -262,47 +337,7 @@
         document.getElementById('lists').appendChild(lists);
     }
 
-    function test_all(){
-        // Array test
-        document.getElementById('simple-test-out').innerHTML = Rasyen.parse(document.getElementById('simple-test-tpl').value);
-
-        // Object test
-        document.getElementById('category-test-out').innerHTML = Rasyen.parse(document.getElementById('category-test-tpl').value);
-
-        // Combining lists
-        document.getElementById('concatenation-test-out').innerHTML = Rasyen.parse(document.getElementById('concatenation-test-tpl').value);
-
-        // Test filters    
-        document.getElementById('filter-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-test-tpl').value);
-
-        // Test custom filters
-        document.getElementById('custom-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('custom-filter-test-tpl').value);
-
-        // Test automatic list filters
-        document.getElementById('auto-filter-test-out').innerHTML = Rasyen.parse(document.getElementById('auto-filter-test-tpl').value);
-
-        // Test filters    
-        document.getElementById('filter-save-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-save-test-tpl').value);
-
-        // Test running filters with no list
-        document.getElementById('filter-alone-test-out').innerHTML = Rasyen.parse(document.getElementById('filter-alone-test-tpl').value);
-
-        // Test meta filter
-        document.getElementById('tag-meta-test-out').innerHTML = Rasyen.parse(document.getElementById('tag-meta-test-tpl').value);
-    }
-
-    function rasyen_tests_init(){
-        load_lists();
-        
-        load_filters();
-
-        load_callbacks();
-        
-        // Start
-        show_lists();
-        test_all();
-    }
-
+    // Play ball!
     window.onload = rasyen_tests_init;
 
     </script>

@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.5
+## RaSyEn - Random Syntax Engine v.1.6
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -177,6 +177,8 @@ Pre-built filters are:
     - Sets the first letter of the selected text to lower case.
 - `=first-to-upper`
     - Sets the first letter of the selected text to upper case.
+- `=words`
+    - By itself does nothing, but is intended to be used with other filters, that then apply to each word of the result.
 - `=a-or-an`
     - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
 - `=random-category`
@@ -246,6 +248,21 @@ Rasyen.list_load("animal", [
 // Parse 
 
 var out = Rasyen.parse("%animal=a-or-an%"); // => "a tiger" or "an ostrich"
+```
+
+Some filters accept parameters or even use other filters, like `=words`:
+
+```js
+
+// Load a list called "animal"
+
+Rasyen.list_load("kung-fu", [
+    "angry tiger style",
+    "spinning ostrich kick"
+]);
+
+var out = Rasyen.parse("%kung-fu=words=first-to-upper%"); //  => "Angry Tiger Style" ...
+
 ```
 
 ### Using Categories and Combining Lists
