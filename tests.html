@@ -13,12 +13,16 @@
     <meta name="keywords" content="random generation, random syntax engine, random phrase generator" />
 
     <style type="text/css">
+        /* reset */
+        html{color:#000;background:#fff}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,caption,cite,code,dfn,em,strong,th,var{font-style:normal;font-weight:normal}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;*font-size:100%}legend{color:#000}#yui3-css-stamp.cssreset{display:none}
+
+        /* Styles */
         body {
             margin: 0; 
-            padding: 0;
+            padding: 2% 0;
             color: #ddd;
             font-family: Hack, "Andale Mono", "Lucida Console", Helvetica, Arial, monospace;
-            font-size: 90%;
+            font-size: 12px;
 
             background-color: #7d7e7d; /* Fallback */
             background-image: -webkit-gradient(linear, left top, left bottom, from(#7d7e7d), to(#0e0e0e));
@@ -33,27 +37,84 @@
 
             min-height: 100%;
         }
+        h1, h2, h3, h4 { margin: 15px 0; }
+        h1 { font-size: 200%; }
+        h2 { font-size: 180%; }
+        h2 { font-size: 160%; }
+        h3 { font-size: 140%; }
+        h4 { font-size: 120%; }
+
         a { color: #fff; }
+        p { padding: 15px; }
+        ul { padding: 15px; }
         header pre { font-size: 9px; }
-        footer,header { text-align: center; }
-        input { background-color: #111; color: #ddd; text-align: center; width: 100%; max-width: 320px; border: 1px solid #ddd; padding: 5px 0; }
+        header h1 { letter-spacing: 3px; }
+        h1 span.acronym { border-bottom: 1px solid #ddd; }
+        
+        footer,header { text-align: center; margin: 0 2% 0 2%; }
+        header, section, footer { background-color: #111; padding: 2%; }
+        
+        section, article { margin: 2%; }
+        section h2 { text-align: center; }
+        
+        footer nav ul li { display: inline; }
+
         button { padding: 15px 0; border-radius: 4px; font-size: 140%; width: 75%; background-color: #111; color: #ddd; border: 1px solid #ddd; cursor: pointer; }
         button:hover { background-color: #444; color: #fff; }
-        header, section, footer { background-color: #111; margin: 2%; padding: 2%; }
-        .button-box { text-align: center; }
-        #tests { padding: 0; margin: 0; }
-        #tests li { text-align: center; border-bottom: 1px solid #aaa; list-style: none; }
-        #tests li:last-of-type { border-bottom: none; }
-        #tests h3 { text-decoration: underline; }
-        #tests p:before{ content: 'Result: "'; }
-        #tests p { font-size: 140%; }
-        #tests p:after{ content: '"'; }
         
-        ul.inline > li { display: inline; }
-        ul.inline > li:after { content: '", "'; }
-        ul.inline > li:first-of-type:before { content:'["'; }
-        ul.inline > li:last-of-type:after { content:'"]'; }
-        ul.inline > li:first-of-type:before { content:'["'; }
+        .test-button-box { text-align: center; }
+        
+        #list-data ul > li { list-style-type: none; }
+        
+        #tests { padding: 0; margin: 0; }
+        #tests li { list-style: none; width: 100%; margin-bottom: 45px;}
+        #tests li div { width: 100%; }
+        #tests h3 { width: auto; border-bottom : 1px solid #ddd; text-align: left; padding-left: 1%;}
+        #tests .template:before,
+        #tests .result:before { display: block; padding: 15px 0; }
+        #tests .template:before { content: 'Template:'; }
+        #tests .result:before { content: 'Result:'; }
+        
+        #tests .template input,
+        #tests .result p { font-size: 140%; background-color: #333; color: #ddd; text-align: left; margin: 15px 0; padding: 15px; width: 90%; border: 1px solid #ddd; }
+
+        /* Formatting Data Sample */
+        ul.object,
+        ul.array { padding: 5px 15px; }
+        
+        ul.array > li { display: inline; }
+
+        span.object-item.string:before,
+        li.array-item.string:before { content: ' "'; }
+        span.object-item.string:after,
+
+        span.object-item:after,
+        li.array-item:after { content: ', '; }
+        span.object-item:after,
+        li.array-item.string:after { content: '", '; }
+
+        span.object-item:last-of-type:after,
+        li.array-item:last-of-type:after { content: ' '; }
+
+        span.object-item.string:last-of-type:after,
+        li.array-item.string:last-of-type:after { content: '" '; }
+
+        span.object-key { margin: 5px; display: block; }
+        span.object-key:before { content: '@' }
+        span.object-key:after { content: ' : ' }
+
+        ul.array:before { content: '['; }
+        ul.array:after { content: '],'; }
+
+        ul.object:before { content: "{\A"; }
+        ul.object:after { content: '},'; }
+
+        ul.first > li > span.object-key:before { content: '%' }
+        ul.first > li >  span.object-key:after { content: '%'; }
+        
+        ul.first.object:before { content: ''; }
+        ul.first.object:after { content: ''; }
+
         
         footer nav ul li { list-style: none; text-align: right; padding: 15px; }
     </style>
@@ -68,14 +129,14 @@
 |____|_  /(____  /_______  / ____|/_______  /___|  /
     \/      \/        \/\/             \/     \/ </pre>
 
-        <h1>RAndom SYntax ENgine</h1>
+        <h1><span class="acronym">Ra</span>ndom <span class="acronym">Sy</span>ntax <span class="acronym">En</span>gine</h1>
     </header>
 
     <section>
 
         <h2>Tests demonstration - <span id="rasyen-version"></span></h2>
         
-        <article>
+        <article id="list-data">
             <h3>List data in use:</h3>
 
             <div id="lists"></div>
@@ -83,68 +144,68 @@
         <article>
             <h3>The tests:</h3>
 
-            <p class="button-box"><button onclick="test_all();">Test Again...</button></p>
+            <p class="test-button-box"><button onclick="test_all();">Test Again...</button></p>
 
             <!-- The templates are in the values of the inputs of the list below -->
             
             <ul id="tests">
                 <li>
                     <h3>Simple test</h3>
-                    <input type="text" id="simple-test-tpl" value="%number% %digit%">
-                    <p id="simple-test-out"></p>
+                    <div class="template"><input type="text" id="simple-test-tpl" value="%number% %digit%"></div>
+                    <div class="result"><p id="simple-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Category test</h3>
-                    <input type="text" id="category-test-tpl" value="%geography@water% %geography@land%">
-                    <p id="category-test-out"></p>
+                    <div class="template"><input type="text" id="category-test-tpl" value="%geography@water% %geography@land%"></div>
+                    <div class="result"><p id="category-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Concatenation test</h3>
-                    <input type="text" id="concatenation-test-tpl" value="%number|digit% %geography@water|geography@land%">
-                    <p id="concatenation-test-out"></p>
+                    <div class="template"><input type="text" id="concatenation-test-tpl" value="%number|digit% %geography@water|geography@land%"></div>
+                    <div class="result"><p id="concatenation-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Filter test</h3>
-                    <input type="text" id="filter-test-tpl" value="%geography@water=to-upper% %geography@land=first-to-upper%">
-                    <p id="filter-test-out"></p>
+                    <div class="template"><input type="text" id="filter-test-tpl" value="%geography@water=to-upper% %geography@land=first-to-upper%"></div>
+                    <div class="result"><p id="filter-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Filter parameter test</h3>
-                    <input type="text" id="filter-param-test-tpl" value="%kung-fu=words=first-to-upper%">
-                    <p id="filter-param-test-out"></p>
+                    <div class="template"><input type="text" id="filter-param-test-tpl" value="%kung-fu=words=first-to-upper%"></div>
+                    <div class="result"><p id="filter-param-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Custom Filter test</h3>
-                    <input type="text" id="custom-filter-test-tpl" value="%geography=plural%">
-                    <p id="custom-filter-test-out"></p>
+                    <div class="template"><input type="text" id="custom-filter-test-tpl" value="%geography=plural%"></div>
+                    <div class="result"><p id="custom-filter-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Automatic Filter test</h3>
-                    <input type="text" id="auto-filter-test-tpl" value="%colours%">
-                    <p id="auto-filter-test-out"></p>
+                    <div class="template"><input type="text" id="auto-filter-test-tpl" value="%colours%"></div>
+                    <div class="result"><p id="auto-filter-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Filter save-result, random-category and category test (uses params)</h3>
-                    <input type="text" id="filter-save-test-tpl" value="%geography=random-category=save-result=saved-key% %geography=category=saved-key%">
-                    <p id="filter-save-test-out"></p>
+                    <div class="template"><input type="text" id="filter-save-test-tpl" value="%geography=random-category=save-result=saved-key% %geography=category=saved-key%"></div>
+                    <div class="result"><p id="filter-save-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Filter alone test (uses params)</h3>
-                    <input type="text" id="filter-alone-test-tpl" value="%=range=2-24%">
-                    <p id="filter-alone-test-out"></p>
+                    <div class="template"><input type="text" id="filter-alone-test-tpl" value="%=range=2-24%"></div>
+                    <div class="result"><p id="filter-alone-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Tag meta filter test</h3>
-                    <input type="text" id="tag-meta-test-tpl" value="Its %animal=meta=a-or-an%">
-                    <p id="tag-meta-test-out"></p>
+                    <div class="template"><input type="text" id="tag-meta-test-tpl" value="Its %animal=meta=a-or-an%"></div>
+                    <div class="result"><p id="tag-meta-test-out"></p></div>
                 </li>
                 <li>
                     <h3>Callback test:</h3>
-                    <p>Parse: <span id="count-parse">0</span>, Templates: <span id="count-templates">0</span>, Tags: <span id="count-tags">0</span>.</p>
+                    <div class="result"><p>Parse: <span id="count-parse">0</span>, Templates: <span id="count-templates">0</span>, Tags: <span id="count-tags">0</span>.</p></div>
                 </li>
             </ul>
 
-            <p class="button-box"><button onclick="test_all();">Test Again...</button></p>
+            <p class="test-button-box"><button onclick="test_all();">Test Again...</button></p>
 
         </article>
     </section>
@@ -152,6 +213,7 @@
     <footer>
         <nav>
             <ul>
+                <li><a href="http://patxipierce.com">Patxi Pierce</a></li>
                 <li><a href="https://github.com/patxipierce/rasyen">Fork RaSyEn on Github.</a></li>
             </ul>
     </footer>
@@ -166,17 +228,25 @@
 
     // Load test lists
     function load_lists(){
+
+        // Loads a JSON object with keys as list names.
         Rasyen.lists_load({
+
+            // A list called %number%
             "number": [
                 "one",
                 "two",
                 "three"
             ],
+
+            // A list called %digit%
             "digit": [
                 "1",
                 "2",
                 "3"
             ],
+
+            // For category tests
             "geography": {
                 "water": [
                     "gulf",
@@ -192,12 +262,16 @@
                     "mountain"
                 ]
             },
+
+            // For filter parameter test
             "kung-fu": [
                 "blind mantis fist",
                 "drunken master style",
                 "angry tiger style",
                 "spinning ostrich kick"
             ],
+
+            // For automatic filter example
             "colours": [
                 [
                     "red",
@@ -212,6 +286,8 @@
                     "#00c"
                 ]
             ],
+
+            // For meta filter example
             "animal": [
                 "%colours% dog and %animal=a-or-an%",
                 "%colours% cat",
@@ -321,7 +397,7 @@
     *   Start tests
     **/
     function rasyen_tests_init(){
-        // Start
+        // Start with version
         load_version();
 
         // Load data
@@ -338,9 +414,10 @@
 
         test_all();
     }
-
+    // Go!
     window.onload = rasyen_tests_init;
     </script>
+
 
     <script type="text/javascript">
     /**
@@ -356,32 +433,69 @@
             // Create the list element
             if(typeof parent == 'undefined'){
                 parent = document.createElement('ul');
-                first = parent;
+
+                if(obj instanceof Array){
+                    parent.className = 'array first';
+                }else if(obj instanceof Object){
+                    parent.className = 'object first';                    
+                }
             }
+
             if(obj instanceof Array){
-                parent.className = "inline";
                 for(var i = 0; i < obj.length; i++) {
-                    parent.appendChild(json_to_ul(obj[i], document.createElement('li')));   
+                    var new_li = document.createElement('li');
+
+                    if(obj[i] instanceof Array){
+                        var new_ul = document.createElement('ul');
+                        new_ul.className = 'array';
+                        
+                        new_li.appendChild(json_to_ul(obj[i], new_ul));
+                        parent.appendChild(new_li);
+
+                    }else if(obj[i] instanceof Object){
+                        var new_ul = document.createElement('ul');
+                        new_ul.className = 'object';
+                        
+                        new_li.appendChild(json_to_ul(obj[i], new_ul));
+                        parent.appendChild(new_li);
+                    
+                    }else{
+                        new_li.className = 'array-item ' + (typeof obj[i]);
+                        parent.appendChild(json_to_ul(obj[i], new_li));    
+                    }
                 };
             }else if(obj instanceof Object){
                 for(key in obj){
                     if(!obj.hasOwnProperty(key)) continue;
-                    var new_li = document.createElement('li');
-                    if(parent == first){
-                        new_li.appendChild(document.createTextNode( "%"+key+"%" ));
+                    
+                    if(obj[key] instanceof Array){
+                        var new_ul = document.createElement('ul');
+                        new_ul.className = 'array';
+                    }else if(obj[key] instanceof Object){
+                        var new_ul = document.createElement('ul');
+                        new_ul.className = 'object';
                     }else{
-                        new_li.appendChild(document.createTextNode( "@"+key ));
+                        var new_ul = document.createElement('span');
+                        new_ul.className = 'object-item ' + (typeof obj[key]);
                     }
-                    new_li.appendChild( json_to_ul(obj[key], document.createElement('ul')) );
+
+                    var new_li = document.createElement('li');
+                    new_li.className = 'object-pair';
+
+                    var new_span = document.createElement('span');
+                    new_span.className = 'object-key';
+                    new_span.appendChild(document.createTextNode( key ));
+                    new_li.appendChild(new_span);
+                    
+                    new_li.appendChild( json_to_ul(obj[key], new_ul) );
                     parent.appendChild(new_li);
                 }
             }else{
-                // Set its contents 
+                var new_span = document.createElement('span');
+                new_span.className = (typeof obj)+'';
                 // does not check for other wonderful js types 
                 parent.appendChild(
-                    document.createElement('span').appendChild(
-                        document.createTextNode( obj )
-                    )
+                    new_span.appendChild(document.createTextNode(obj))
                 );
             }
             return parent;
