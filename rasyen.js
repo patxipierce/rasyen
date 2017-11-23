@@ -104,8 +104,12 @@ var Rasyen = {
             if(Rasyen.lists.hasOwnProperty(list.name) 
                 && Rasyen.lists[list.name] instanceof Object
                 && Object.keys(Rasyen.lists[list.name]).length > 0){
-
-                list.replace = Rasyen.rok(Rasyen.lists[list.name]);
+                
+                var obj = Rasyen.lists[list.name];
+                if(list.categories){
+                    obj = Rasyen.navigate_obj(obj, list.categories);
+                }
+                list.replace = Rasyen.rok(obj);
             }
             return list;
         },

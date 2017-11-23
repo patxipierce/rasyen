@@ -1,5 +1,5 @@
 
-```
+```ascii-art
 __________          _________      ___________       
 \______   \_____   /   _____/__.__.\_   _____/ ____  
  |       _/\__  \  \_____  <   |  | |    __)_ /    \ 
@@ -50,7 +50,7 @@ var template = "Your elf name is %first-part%%second-part%.";
 
 // Parse the template
 
-var out = Rasyen.parse(template); // => "Your elf name is Arayra."
+var out = Rasyen.parse(template); // → "Your elf name is Arayra."
 ```
 
 Or consider this other example:
@@ -213,11 +213,11 @@ Rasyen.list_load("insect", [
 // Parse
 
 var template = "%insect=first-to-upper% and %insect=to-lower%.";
-var out =  Rasyen.parse(template); // => "Moth and moth."
+var out =  Rasyen.parse(template); // → "Moth and moth."
 
 // Or combine filters
 
-out = Rasyen.parse("%insect=to-lower=first-to-upper%."); // => "Mantis."
+out = Rasyen.parse("%insect=to-lower=first-to-upper%."); // → "Mantis."
 ```
 
 Remember, filter order *matters* and they will be applied **from left to right**, so:
@@ -233,7 +233,7 @@ Rasyen.list_load("title", [
 
 // Parse
 
-var out = Rasyen.parse("%title=to-lower=to-upper%"); // => "MISS" or "MRS"
+var out = Rasyen.parse("%title=to-lower=to-upper%"); // → "MISS" or "MRS"
 ```
 
 Or use filters to do grammatical prefixing:
@@ -249,7 +249,7 @@ Rasyen.list_load("animal", [
 
 // Parse 
 
-var out = Rasyen.parse("%animal=a-or-an%"); // => "a tiger" or "an ostrich"
+var out = Rasyen.parse("%animal=a-or-an%"); // → "a tiger" or "an ostrich"
 ```
 
 Some filters accept parameters or even use other filters, like `=words`:
@@ -263,7 +263,7 @@ Rasyen.list_load("kung-fu", [
     "spinning ostrich kick"
 ]);
 
-var out = Rasyen.parse("%kung-fu=words=first-to-upper%"); //  => "Angry Tiger Style" ...
+var out = Rasyen.parse("%kung-fu=words=first-to-upper%"); //  → "Angry Tiger Style" ...
 
 ```
 
@@ -314,7 +314,7 @@ Rasyen.lists_load({
 
 // Parse
 var template = "%name@male% was feeling %adjective%.";
-var out = Rasyen.parse(template); // => "Gandalf was feeling happy."
+var out = Rasyen.parse(template); // → "Gandalf was feeling happy."
 
 // Combine male hobbit names and female using the "|" pipe character
 
@@ -342,13 +342,13 @@ Rasyen.lists_load({
 // Save title to "t1" and feeling to "f1" and use them later
 
 var template = "%title=save-result=t1% was %feeling=save-result=f1%, %t1% was always %f1%";
-var out      =  Rasyen.parse(template); // => "she was sad, she was always sad"
+var out      =  Rasyen.parse(template); // → "she was sad, she was always sad"
 
 
 // You can also remove items so they don't show up twice
 
 template = "%title=remove-result% knew %title% would do it";
-out = Rasyen.parse(template); // => "she knew he would do it"
+out = Rasyen.parse(template); // → "she knew he would do it"
 ```
 
 ### Category Filter
@@ -376,7 +376,7 @@ var template = [
     "there was a brave little %house=category=room%"
 ];
 
-var out = Rasyen.parse(template.join(" ")); // => "In the kitchen there was a brave little toaster";
+var out = Rasyen.parse(template.join(" ")); // → "In the kitchen there was a brave little toaster";
 ```
 
 In the example above by saving the category name you can use it to select the pertinent list item further down the road.
@@ -418,28 +418,28 @@ Rasyen.lists_load({
 
 var template = [
     "%title=remove-result=save-result=t1=first-to-upper%,",
-    // => "He,"
+    // → "He,"
 
     "%name=category=t1=remove-result=save-result=n1%",
-    // => "Lancelot"
+    // → "Lancelot"
 
     "loveth %title=remove-result=save-result=t2%,",
-    // => "loveth she,"
+    // → "loveth she,"
 
     "%name=category=t2=remove-result=save-result=n2%,",
-    // => "Guinevere,"
+    // → "Guinevere,"
 
     "but %n2% loveth %name=category=t1=save-result=n3%.",
-    // => "but Guinevere loveth Arthur."
+    // → "but Guinevere loveth Arthur."
 
     "%n1% grew jealous of %n3%,",
-    // => "Lancelot grew jealous of Arthur,"
+    // → "Lancelot grew jealous of Arthur,"
 
     "and plotted with %name=category=t2=save-result=n4%",
-    // => "and plotted with Morgana"
+    // → "and plotted with Morgana"
 
     "to forsake %adjective=category=t1%."
-    // => "to forsake him."
+    // → "to forsake him."
 ];
 
 // Parse
@@ -479,12 +479,12 @@ Rasyen.list_load("elf", {
     "name" : "%elf@a%%elf@b%" // For use with the =meta filter
 });
 
-var template = "Your elf name is %elf@name=meta%."; // => "Your elf name is Arayra."
+var template = "Your elf name is %elf@name=meta%."; // → "Your elf name is Arayra."
 
 // Or store the name as %elf-name%
 template = "This elf is called %elf@name=meta=save-result=elf-name%.";
 
-var out = Rasyen.parse(template); // => "Your elf name is Arayra."
+var out = Rasyen.parse(template); // → "Your elf name is Arayra."
 ```
 This looks like the first example, with a key difference, now that you are using only one tag you can save it using the `=save-result` filter.
 
