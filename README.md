@@ -23,7 +23,7 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
     - [Basic filters](#basic-filters)
     - [Using categories and combining lists](#using-categories-and-combining-lists)
     - [Saving or removing a result](#saving-or-removing-a-result)
-    - [Category filter](#Category-filter)
+    - [Category filter](#category-filter)
     - [All together now](#all-together-now)
     - [The meta filter](#the-meta-filter)
     - [Custom filters](#custom-filters)
@@ -188,7 +188,7 @@ Pre-built filters are:
 - `=save-result`
     - Allows saving the result to a key (see example below) for later usage.
 - `=category`
-    - Meant to be used with the save-result filter Allows using a saved variable as list key (see example below).
+    - Meant to be used with the save-result filter Allows using a saved variable as list key (see the [example](#category-filter)).
 - `=remove-result`
     - Will remove the result from the list to it cannot appear again in other tag calls.
 - `=meta`
