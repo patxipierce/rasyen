@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.7
+## RaSyEn - Random Syntax Engine v.1.8
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -152,7 +152,9 @@ RaSyEn contains several containers you can access directly if needed:
 - `Rasyen.options` _object_
     - The options container, as RaSyEn grows it will prove its worth.
         - `Rasyen.options.max_recusrion` _number_
-            -limits the amount of recursion to 10 when using the meta filter.
+            - Limits the amount of recursion to 10 when using the meta filter.
+        - `Rasyen.options.use_window_crypto` _boolean_
+            - Defaults to true. If false it force the use of Math.random() instead.
 
 You can also use these callback functions to edit core functionalities.
 

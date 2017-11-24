@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.7
+*   RaSyEn - Random Syntax Engine v1.8
 *
 */
 var Rasyen = {
@@ -14,7 +14,8 @@ var Rasyen = {
     removed_items : [],
     // Options
     options : {
-        max_recusrion : 10
+        max_recusrion : 10,
+        use_window_crypto: true
     },
     callback : {
         parse          : function(parsed){ return parsed; },
@@ -170,7 +171,9 @@ var Rasyen = {
 
     // returns max and min inclusive random number
     random_range : function(min, max){
-        if(typeof window.crypto == 'object'){
+        if( this.options.use_window_crypto 
+            && typeof window.crypto == 'object'){
+            
             // Soooper cool random generation.
             var range = max - min;
             if (range <= 0) {
