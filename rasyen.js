@@ -131,9 +131,14 @@ var Rasyen = {
             var saved_key = list.filter[list.filter.indexOf('category')+1];
             if(typeof saved_key == 'string' && typeof Rasyen.lists[saved_key] == 'object'){
                 var list_key = Rasyen.random_str(Rasyen.lists[saved_key]);
-                if(typeof Rasyen.lists[list.name][list_key] == 'object'){
-                    list.categories = [list_key];
-                    list.replace = Rasyen.random_str(Rasyen.lists[list.name][list_key]);
+                var list_corpus = Rasyen.lists[list.name];
+                if(list.categories){
+                    list_corpus = Rasyen.navigate_obj(list_corpus, list.categories);
+                }
+                
+                if(typeof list_corpus[list_key] == 'object'){
+                    //list.categories = [list_key];
+                    list.replace = Rasyen.random_str(list_corpus[list_key]);
                 }
             }
             return list;

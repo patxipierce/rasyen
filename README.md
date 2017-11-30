@@ -579,9 +579,9 @@ var out = Rasyen.parse("%=range=2-24%");
 
 Note how in the example above we pass the random range numbers to the filter as if they were a filter call. There are many other ways to do this, but if you are going to be passing strings it is recommended that you pass parameters from the list instead as the use of reserved characters such as `|`,`=`, `@`, or `%` will be parsed.
 
-### Filter Nesting
+### Callbacks
 
-Another interesting thing you can do is filter nesting, where you parse a tag with a list item that may or may not contain more tags. This example uses a callback that will do the same as when using the `=meta` filter in a tag, except it will now happen in all templates parsed.
+Three callbacks allow you to manipulate information in different parts of the parsing process.
 
 ```js
 
