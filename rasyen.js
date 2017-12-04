@@ -8,7 +8,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '1.7',
+    version : '1.8',
     lists : {},
     saved_keys : [],
     removed_items : [],
