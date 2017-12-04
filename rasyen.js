@@ -135,9 +135,8 @@ var Rasyen = {
                 if(list.categories){
                     list_corpus = Rasyen.navigate_obj(list_corpus, list.categories);
                 }
-                
-                if(typeof list_corpus[list_key] == 'object'){
-                    //list.categories = [list_key];
+                if(list_corpus && typeof list_corpus[list_key] == 'object'){
+                    list.categories = [list_key]; // for future filters
                     list.replace = Rasyen.random_str(list_corpus[list_key]);
                 }
             }
