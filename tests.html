@@ -166,7 +166,7 @@
             </ul>
     </footer>
 
-    <script src="rasyen.min.js"></script>
+    <script src="rasyen.js"></script>
     <script>
 
 /*
@@ -281,12 +281,16 @@
                 template : "%color%"
             },
             "filter-save-test" : {
-                name : "Filter save-result, random-category and category test (uses params)",
+                name : "Filter save-result, random-category and category test (uses parameters)",
                 template : "%geography=random-category=save-result=saved-key% %geography=category=saved-key%"
             },
             "filter-alone-test" : {
-                name : "Filter alone test (uses params)",
+                name : "Filter alone test (uses parameters)",
                 template : "%=range=2-24%"
+            },
+            "filter-remove-result" : {
+                name : "Remove result filter test (last one should not work, because the list only has three items)",
+                template : "%number=remove-result% %number=remove-result% %number=remove-result% %number=remove-result%"
             },
             "tag-meta-test" : {
                 name : "Tag meta filter test",
@@ -299,6 +303,7 @@
 *   Load behaviour
 **/
 
+    // Create the elements for testing
     function create_template_html(templates){
         var ul = document.getElementById('tests');
 
@@ -338,7 +343,9 @@
         }
     }
 
-    // Load the filters
+    /*
+    *   Filter examples
+    */ 
     function load_filters(){
         // Load custom filters
 
@@ -375,7 +382,9 @@
         }
     }
 
-    // Load all the callbacks
+    /*
+    *   Callback examples
+    */
     function load_callbacks(){
         // Will run once for every parse call
         Rasyen.callback.parse = function(parsed){

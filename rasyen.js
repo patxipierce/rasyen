@@ -8,7 +8,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '1.8',
+    version : '1.9',
     lists : {},
     saved_keys : [],
     removed_items : [],
@@ -502,12 +502,11 @@ var Rasyen = {
             }
             this.saved_keys = [];
         }
-        
+
         // Add back any removed items if any
         if(this.removed_items.length){
-            for(item in this.removed_items){
-                if(!item.hasOwnProperty(item)) continue;
-                
+            for (var i = 0; i < this.removed_items.length; i++) {
+                var item = this.removed_items[i];
                 if(item.path && this.lists[item.list_name] instanceof Object){
                     var data = this.navigate_obj(this.lists[item.list_name], item.path);
                     data.splice(item.pos, 0, item.str);
@@ -516,6 +515,8 @@ var Rasyen = {
                     this.lists[item.list_name].splice(item.pos, 0, item.str);    
                 }
             }
+            // Reset removed items
+            this.removed_items = [];
         }
     }
 }
