@@ -101,12 +101,14 @@ Here you will find a brief description of all [methods](#methods), [containers](
 
 ### Template Syntax
 
-Templates are strings fed into the parser, who will look for _tags_, parts of the string with surrounding percent symbols, and proceed from there. Here is a basic description of a tags Symbology.
+Templates are strings fed into the parser, who will look for _tags_, parts of the string with surrounding percent symbols, and proceed from there. Here is a basic description of a tags symbology.
 
 - `%` to open and close a _tag_.
 - `@` to separate _categories_.
 - `|` to to merge different _lists_.
 - `=` to separate different _filters_.
+
+With that in mind you can create templates with tags such as: `%list-a@category|list-b@category=filter-1=filter-2=filter-n%`. Easy peasy.
 
 ### Methods
 

@@ -10,6 +10,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
 
     // As good a place as any to store a word list
     Rasyen.options['irregular-words'] = {
+        "acropolis": "acropoleis",
         "addendum": "addenda",
         "aircraft": "aircraft",
         "alga": "algae",
@@ -29,6 +30,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "basis": "bases",
         "beau": "beaux",
         "bison": "bison",
+        "blues": "blues",
         "buffalo": "buffalo",
         "bureau": "bureaus",
         "cactus": "cacti",
@@ -36,6 +38,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "carp": "carp",
         "census": "censuses",
         "chassis": "chassis",
+        "Cherokee":"Cherokee",
         "cherub": "cherubim",
         "child": "children",
         "château": "châteaus",
@@ -43,13 +46,18 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "codex": "codices",
         "concerto": "concerti",
         "corpus": "corpora",
+        "Cree": "Cree",
         "crisis": "crises",
         "criterion": "criteria",
+        "Comanche": "Comanche",
         "curriculum": "curricula",
         "datum": "data",
         "deer": "deer",
+        "Delaware": "Delaware",
         "diagnosis": "diagnoses",
         "die": "dice",
+        "dormouse": "dormice",
+        "Dutch": "Dutchmen",
         "dwarf": "dwarfs",
         "echo": "echoes",
         "elf": "elves",
@@ -67,6 +75,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "formula": "formulae",
         "fungus": "fungi",
         "gallows": "gallows",
+        "genesis": "geneses",
         "genus": "genera",
         "goose": "geese",
         "graffito": "graffiti",
@@ -74,10 +83,15 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "half": "halves",
         "hero": "heroes",
         "hoof": "hooves",
+        "Hopi": "Hopi",
         "hovercraft": "hovercraft",
         "hypothesis": "hypotheses",
         "index": "indices",
+        "Irish": "Irishmen",
+        "Iroquois": "Iroquois",
+        "Japanese": "Japanese",
         "kakapo": "kakapo",
+        "Kiowa": "Kiowa",
         "knife": "knives",
         "larva": "larvae",
         "leaf": "leaves",
@@ -88,13 +102,16 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "louse": "lice",
         "man": "men",
         "matrix": "matrices",
+        "Maori": "Maori",
         "means": "means",
         "medium": "media",
         "memorandum": "memoranda",
         "millennium": "millennia",
         "minutia": "minutiae",
         "moose": "moose",
+        "money": "monies",
         "mouse": "mice",
+        "Navajo": "Navajo",
         "nebula": "nebulae",
         "nemesis": "nemeses",
         "neurosis": "neuroses",
@@ -102,11 +119,13 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "nucleus": "nuclei",
         "oasis": "oases",
         "offspring": "offspring",
+        "Ojibwa": "Ojibwa",
         "opus": "opera",
         "ovum": "ova",
         "ox": "oxen",
         "paralysis": "paralyses",
         "parenthesis": "parentheses",
+        "penny": "pennies",
         "person": "people",
         "phenomenon": "phenomena",
         "phylum": "phyla",
@@ -118,24 +137,30 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "radius": "radii",
         "referendum": "referenda",
         "salmon": "salmon",
+        "samurai": "samurai",
         "scarf": "scarves",
         "self": "selves",
         "series": "series",
         "sheep": "sheep",
         "shelf": "shelves",
         "shrimp": "shrimp",
+        "Sioux": "Sioux",
         "spacecraft": "spacecraft",
         "species": "species",
         "spectrum": "spectra",
         "squid": "squid",
+        "staff": "staves",
         "stimulus": "stimuli",
         "stratum": "strata",
+        "succubus": "succubi",
         "swine": "swine",
         "syllabus": "syllabi",
         "symposium": "symposia",
         "synopsis": "synopses",
         "synthesis": "syntheses",
         "tableau": "tableaus",
+        "terminus": "termini",
+        "testis": "testes",
         "that": "those",
         "thesis": "theses",
         "thief": "thieves",
@@ -144,16 +169,20 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         "tooth": "teeth",
         "trout": "trout",
         "tuna": "tuna",
+        "Unix": "Unices",
+        "Vax": "Vaxen",
         "vertebra": "vertebrae",
         "vertex": "vertices",
         "veto": "vetoes",
+        "virus": "viruses",
         "vita": "vitae",
         "vortex": "vortices",
         "watercraft": "watercraft",
         "wharf": "wharves",
         "wife": "wives",
         "wolf": "wolves",
-        "woman": "women"
+        "woman": "women",
+        "Zuni": "Zuni"
     };
 
     Rasyen.options['pronouns'] = { // all cases must be present
@@ -246,10 +275,29 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
     Rasyen.filters['to-plural'] = function(list){
         if(list.replace && list.replace.slice(-1) !== 's'){
             var plurals = Rasyen.options['irregular-words'];
-            if(plurals.hasOwnProperty(list.replace)){
-                list.replace = plurals[list.replace];
+            
+            var str = list.replace.toLowerCase()
+            
+            if(plurals.hasOwnProperty(str)){
+
+                list.replace = plurals[str];
+            }else if(str.length > 2 
+                && str.slice(-1) == 's'
+                || str.slice(-2) == 'sh'
+                || str.slice(-2) == 'ch'
+                || str.slice(-2) == 'ss'
+                || str.slice(-2) == 'tz'){
+
+                list.replace = str+'es';
+            
+            }else if(str.length > 2
+                && str.slice(-1) == 'y' 
+                && 'aeiou'.indexOf(str.substr(str.length-2,1)) == -1){
+
+                list.replace = str.slice(0, -1)+'ies';
+            
             }else{
-                list.replace = list.replace+'s';                
+                list.replace = list.replace+'s';
             }
 
         }
@@ -264,7 +312,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
             if(singulars.hasOwnProperty(list.replace)){
                 list.replace = singulars[list.replace];
             }else if(list.replace.length > 3 && list.replace.slice(-3) == 'ies'){
-                list.replace = list.replace.slice(0, -3);
+                list.replace = list.replace.slice(0, -3)+'y';
             }else if(list.replace.length > 2 && list.replace.slice(-2) == 'es'){
                 list.replace = list.replace.slice(0, -2);
             }else if(list.replace.slice(-1) == 's'){
