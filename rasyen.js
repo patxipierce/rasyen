@@ -1,6 +1,7 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v1.8
+*   RaSyEn - Random Syntax Engine v2.0.0
+*   Docs available at code.patxipierce.com/rasyen/
 *
 */
 var Rasyen = {
@@ -8,7 +9,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '1.9',
+    version : '2.0.0',
     lists : {},
     saved_keys : [],
     removed_items : [],
@@ -17,26 +18,16 @@ var Rasyen = {
         max_recusrion : 10,
         use_window_crypto: true
     },
+
+    // Callbacks
     callback : {
         parse          : function(parsed){ return parsed; },
         parse_template : function(parsed){ return parsed; },
         parse_tag      : function(parsed){ return parsed; },
     },
 
-    /*
-    *   Filters: Available to the syntax engine
-    */
-
+    // Filters: Available to the syntax engine
     filters : {
-
-        // %list-name=a-or-an% - Returns A or An, depending on input.
-        'a-or-an' : function (list){
-            if(typeof list.replace === 'string' && list.replace !== ''){
-                list.replace = 'a'+(('aeiou'.indexOf(list.replace.charAt(0).toLowerCase()) == -1) ? '' : 'n')+' '+list.replace;
-            }
-            return list;
-        },
-
         // %list-name=first-to-upper% - Capitalize the first letter
         'first-to-upper' : function(list) {
             if(typeof list.replace === 'string' && list.replace !== ''){ 
@@ -97,6 +88,20 @@ var Rasyen = {
                 
                 }
             }
+            return list;
+        },
+
+        // %=range=2-24% will select a random positive number between 2 and 24.
+        'range' : function(list){
+            var ranges = [1,64]; // default random range
+
+            if(list.filter.length >= 2){
+                ranges = list.filter[1].split('-').map(function(x) {
+                   return Number(x);
+                });
+            }
+
+            list.replace = Rasyen.random_range(ranges[0], ranges[1]);
             return list;
         },
 
@@ -175,51 +180,49 @@ var Rasyen = {
 
     // returns max and min inclusive random number
     random_range : function(min, max){
+        var int = min;
         if( this.options.use_window_crypto 
             && typeof window.crypto == 'object'){
-            
             // Soooper cool random generation.
-            var range = max - min;
-            if (range <= 0) {
-                //max must be larger than min
-                return false;
-            }
+            var range = (max + 1) - min;
             var requestBytes = Math.ceil(Math.log2(range) / 8);
-            if (!requestBytes) { // No randomness required
-                return min;
+            if (max > min && requestBytes) {
+                var maxNum = Math.pow(256, requestBytes);
+                var ar = new Uint8Array(requestBytes);
+                while (true) {
+                    window.crypto.getRandomValues(ar);
+                    var val = 0;
+                    for (var i = 0; i < requestBytes; i++) {
+                        val = (val << 8) + ar[i];
+                    }
+                    if (val + range - (val % range) < maxNum) {
+                        int = min + (val % range);
+                        break;
+                    }
+                }                    
             }
-            var maxNum = Math.pow(256, requestBytes);
-            var ar = new Uint8Array(requestBytes);
-            while (true) {
-                window.crypto.getRandomValues(ar);
-                var val = 0;
-                for (var i = 0; i < requestBytes; i++) {
-                    val = (val << 8) + ar[i];
-                }
-                if (val + range - (val % range) < maxNum) {
-                    return min + (val % range);
-                }
-            }
+            
         }else{
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+            int = Math.floor(Math.random() * (max - min + 1)) + min; 
         }
+        return int;
     },
 
     //  Get Random Array Item.
     rai : function (items) {
-        return items[ this.random_range(0,items.length) ];
+        return items[ this.random_range(0,items.length-1) ];
     },
 
     //  Get Random Object Item.
     roi : function (obj) {
         var keys = Object.keys(obj);
-        return obj[keys[  this.random_range(0, keys.length) ]];
+        return obj[keys[  this.random_range(0, keys.length-1) ]];
     },
 
     // Get Random Object Key.
     rok : function (obj) {
         var keys = Object.keys(obj);
-        return keys[ this.random_range(0, keys.length) ];
+        return keys[ this.random_range(0, keys.length-1) ];
     },
 
     // Will select a random item or key recursively until it finds a string
@@ -259,9 +262,10 @@ var Rasyen = {
         return arguments[0];
     },
 
+    // Navigates arr to put rep into old_obj
     replace_in_obj : function(old_obj, rep, arr){
-        // Convert arr to a deep object
         var new_obj = temp = {};
+        // Convert arr to a deep object
         for (var i = 0; i < arr.length; i++) {
             if(arr.length - 1 == i){
                 temp = temp[arr[i]] = rep
@@ -273,12 +277,13 @@ var Rasyen = {
         return this.extend_obj(old_obj, new_obj);
     },
 
+    // Save item to the list pool
     list_save_item : function(result, name){
         this.saved_keys.push(name);
         if(typeof this.lists[name] == 'undefined'){
             this.lists[name] = [];
         }
-        Rasyen.lists[name].push(result);
+        this.lists[name].push(result);
     },
 
     // Removes an item from an existing list
@@ -288,15 +293,18 @@ var Rasyen = {
             do_rebuild = false;
 
             if(arr instanceof Array && this.lists[list_name] instanceof Object){
+                // the list has properties find the final array...
                 data = this.navigate_obj(this.lists[list_name], arr);
                 do_rebuild = true;
             }else{
+                // ... or the list is an array
                 data = this.lists[list_name];
             }
 
             if(data instanceof Array){
                 var pos = data.indexOf(str);
                 if(pos != -1) {
+                    // Remove item
                     data.splice(pos, 1);
 
                     // save item to re-insert it later
@@ -310,6 +318,7 @@ var Rasyen = {
             }
 
             if(do_rebuild){
+                // If the list is an object put the modified list where it belongs
                 this.lists[list_name] = this.replace_in_obj(this.lists[list_name], data, arr);
 
             }
@@ -409,7 +418,7 @@ var Rasyen = {
 
             // Filters:
 
-            // Apply filter to list if it is named the same.
+            // Apply filter to list if it has a function assigned.
             if(typeof this.filters[list.name] == 'function'){
                 list = this.filters[list.name](list);
             }

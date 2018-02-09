@@ -166,7 +166,12 @@
             </ul>
     </footer>
 
+    <!-- Core RaSyEn library -->
     <script src="rasyen.js"></script>
+
+    <!-- Load the language filters we will use -->
+    <script src="filters/en_US-filters.js"></script>
+
     <script>
 
 /*
@@ -245,7 +250,18 @@
                 "%color% cat",
                 "goat from the %geography@land%",
                 "goldfish from the %geography@water%"
+            ],
+
+            // Pronoun tests
+            "pronoun": ["he","she","they","fae","ae","ey","per","ve","xe","ze"],
+            "opinion" : [
+                "It's his; they said.",
+                "The pronoun card is theirs.",
+                "His favourite color is unknown.",
+                "They tried to convince her that asexuality does not exist.",
+                "He laughed at the notion of gender binary."
             ]
+
         });
     }
 
@@ -254,47 +270,63 @@
         return {
             "simple-test" : {
                 name : "Simple test",
+                description : "Get a random number and a random digit.",
                 template : "%number% %digit%"
             },
             "category-test" : {
                 name : "Category test",
+                description : "",
                 template : "%geography@water% %geography@land%"
             },
             "concatenation-test" : {
                 name : "Concatenation test",
+                description : "",
                 template : "%number|digit% %geography@water|geography@land%"
             },
             "filter-test" : {
-                name : "Filter test",
-                template : "%geography@water=to-upper% %geography@land=first-to-upper%"
+                name : "Upper and Lower Case Filter test",
+                description : "",
+                template : "%geography=to-upper=first-to-lower% %geography=to-lower=first-to-upper%"
             },
             "filter-param-test" : {
-                name : "Filter parameter test",
+                name : "Filter per Words test",
+                description : "",
                 template : "%kung-fu=words=first-to-upper%"
-            },
-            "custom-filter-test" : {
-                name : "Custom Filter test",
-                template : "%geography=plural%"
             },
             "auto-filter-test" : {
                 name : "Automatic Filter test",
+                description : "",
                 template : "%color%"
             },
             "filter-save-test" : {
                 name : "Filter save-result, random-category and category test (uses parameters)",
+                description : "",
                 template : "%geography=random-category=save-result=saved-key% %geography=category=saved-key%"
             },
             "filter-alone-test" : {
                 name : "Filter alone test (uses parameters)",
+                description : "",
                 template : "%=range=2-24%"
             },
             "filter-remove-result" : {
                 name : "Remove result filter test (last one should not work, because the list only has three items)",
-                template : "%number=remove-result% %number=remove-result% %number=remove-result% %number=remove-result%"
+                description : "",
+                template : "%number=remove-result% %number=remove-result% %number=remove-result% %number%"
             },
             "tag-meta-test" : {
                 name : "Tag meta filter test",
+                description : "",
                 template : "Its %animal=meta=a-or-an%"
+            },
+            "custom-filter-test" : {
+                name : "Plural to singular test (en_US-filters)",
+                description : "A very simple (and not very thorough) function convert from singular to plural and back.",
+                template : "%geography=to-plural=save-result=plu% %plu=to-singular%"
+            },
+            "pronoun-swap-test" : {
+                name : "Pronoun swap test (en_US-filters)",
+                description : "Searches for the first pronoun in a phrase and changes to a designated pronoun in an entire phrase.",
+                template : "\"%opinion=save-result=op%\" + \"%pronoun=save-result=pn%\" = \"%op=pronoun-swap=pn%\""
             }
         };
     }
@@ -349,14 +381,6 @@
     function load_filters(){
         // Load custom filters
 
-        // A very basic attempt to make a word plural
-        Rasyen.filters['plural'] = function(list){
-            if(list.replace && list.replace.slice(-1) !== 's'){
-                list.replace = list.replace+'s';
-            }
-            return list;
-        }
-
         // The filter "color" is called the same name as the "color" list,
         // so it will be applied automatically when the %color% tag is called.
         Rasyen.filters['color'] = function(list){
@@ -368,18 +392,6 @@
             return list;
         }
 
-        // Will select a random number between two numbers.
-        Rasyen.filters['range'] = function(list){
-            var ranges = [1,64]; // default random range
-
-            if(list.filter.length >= 2){
-                ranges = list.filter[1].split('-').map(function(x) {
-                   return Number(x);
-                });
-            }
-            list.replace = Rasyen.random_range(ranges[0], ranges[1]);
-            return list;
-        }
     }
 
     /*
@@ -427,7 +439,7 @@
     *   Start tests
     **/
     function rasyen_tests_init(){
-        // Start with version
+        // Start with loading version
         load_version();
 
         // Load templates

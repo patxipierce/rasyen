@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.1.9
+## RaSyEn - Random Syntax Engine v.2.0.0
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -183,10 +183,10 @@ Pre-built filters are:
     - Sets the first letter of the selected text to upper case.
 - `=words`
     - By itself does nothing, but is intended to be used with other filters, that then apply to each word of the result.
-- `=a-or-an`
-    - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
 - `=random-category`
     - If the list (javascript object) has keys (properties) it will select one at random if not it will return a string (if any).
+- `=range`
+    - Will return a random number between the range specified.
 - `=save-result`
     - Allows saving the result to a key (see example below) for later usage.
 - `=category`
@@ -195,6 +195,21 @@ Pre-built filters are:
     - Will remove the result from the list to it cannot appear again in other tag calls.
 - `=meta`
      - Evaluates the tag again to check for more tags in the result string.
+
+English Filters:
+
+These filters are located in the `filters/en_US-filters.js` file. It is **not** included by default.
+
+- `=a-or-an`
+    - Will prefix the word with "a" or "an" depending on the selected texts starting letter.
+- `=pronoun-swap`
+    - Searches the result for a pronoun and replaces all the occurrences in the result with the same gender.
+- `=to-plural`
+    - Converts a word to plural.
+- `=to-singular`
+    - Converts a word to singular.
+- `=number-to-words`
+    - Converts a number from digits to its word representation.
 
 ## Examples:
 
