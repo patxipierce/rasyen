@@ -16,6 +16,7 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
 
 - [Demo](#demo)
 - [Documentation](#documentation)
+    - [Template Syntax](#template-syntax)
     - [Methods](#methods)
     - [Containers and callbacks](#containers-and-callbacks)
     - [Filters](#filters)
@@ -108,7 +109,11 @@ Templates are strings fed into the parser, who will look for _tags_, parts of th
 - `|` to to merge different _lists_.
 - `=` to separate different _filters_.
 
-With that in mind you can create templates with tags such as: `%list-a@category|list-b@category=filter-1=filter-2=filter-n%`. Easy peasy.
+With that in mind you can create templates with tags such as: 
+
+`%list-a@category|list-b@category=filter-1=filter-2=filter-n%`.
+
+Easy peasy.
 
 ### Methods
 
