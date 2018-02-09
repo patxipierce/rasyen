@@ -245,7 +245,7 @@ var Rasyen = {
         return obj;
     },
     
-    // Flip object keys : values to value : keys
+    // Flip object keys : values to value : keys, overtiring duplicate keys
     flip_obj : function(obj){
         jbo = {};
         for(var k in obj){
@@ -437,7 +437,6 @@ var Rasyen = {
             if(list.filter){
                 for (var n = 0; n < list.filter.length; n++) {
                     var fn = list.filter[n];
-//console.log(list.filter[n]);
                     if(typeof this.filters[fn] === 'function'){
                         list = this.filters[fn](list);
                     }

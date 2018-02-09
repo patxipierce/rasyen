@@ -46,11 +46,12 @@ Rasyen.list_load("second-part", [
 
 // Templates use tags like %list-name% to produce random output.
 
-var template = "Your elf name is %first-part%%second-part%.";
+var template = "Your elf name is %first-part%-%second-part%.";
 
 // Parse the template
 
-var out = Rasyen.parse(template); // → "Your elf name is Arayra."
+var out = Rasyen.parse(template); 
+// → "Your elf name is Ara-yra."
 ```
 
 Or consider this other example:
@@ -98,6 +99,15 @@ For a more complex demo that uses AJAX and a simple cache system for the lists s
 
 Here you will find a brief description of all [methods](#methods), [containers](#containers-and-callbacks), [callbacks](#containers-and-callbacks) and [filters](#filters) in RaSyEn.
 
+### Template Syntax
+
+Templates are strings fed into the parser, who will look for _tags_, parts of the string with surrounding percent symbols, and proceed from there. Here is a basic description of a tags Symbology.
+
+- `%` to open and close a _tag_.
+- `@` to separate _categories_.
+- `|` to to merge different _lists_.
+- `=` to separate different _filters_.
+
 ### Methods
 
 The methods built in Rasyen are:
@@ -136,6 +146,8 @@ The methods built in Rasyen are:
     - Parses a single template with %tags% in it and returns an object
 - `Rasyen.parse(string)`
     - The main parse method, will accept a string and return a string with the changed values if any
+
+There are actually more public methods in Rasyen, but these are the methods most people will use.
 
 ### Containers and Callbacks
 
@@ -190,7 +202,7 @@ Pre-built filters are:
 - `=save-result`
     - Allows saving the result to a key (see example below) for later usage.
 - `=category`
-    - Meant to be used with the save-result filter Allows using a saved variable as list key (see the [example](#category-filter)).
+    - Meant to be used with the save-result filter. Allows using a saved variable as list key (see the [example](#category-filter)).
 - `=remove-result`
     - Will remove the result from the list to it cannot appear again in other tag calls.
 - `=meta`
