@@ -260,7 +260,9 @@
                 "His favourite color is unknown.",
                 "They tried to convince her that asexuality does not exist.",
                 "He laughed at the notion of gender binary."
-            ]
+            ],
+            // Irregular nouns
+            "irregular" : ["ox","tomato","tooth"]
 
         });
     }
@@ -318,15 +320,20 @@
                 description : "",
                 template : "Its %animal=meta=a-or-an%"
             },
-            "custom-filter-test" : {
+            "plural-singular-filter-test" : {
                 name : "Plural to singular test (en_US-filters)",
                 description : "A very simple (and not very thorough) function convert from singular to plural and back.",
-                template : "%geography=to-plural=save-result=plu% %plu=to-singular%"
+                template : "%irregular=to-plural=save-result=plu% %plu=to-singular%"
             },
             "pronoun-swap-test" : {
                 name : "Pronoun swap test (en_US-filters)",
                 description : "Searches for the first pronoun in a phrase and changes to a designated pronoun in an entire phrase.",
                 template : "\"%opinion=save-result=op%\" + \"%pronoun=save-result=pn%\" = \"%op=pronoun-swap=pn%\""
+            },
+            "number-to-words-test" : {
+                name : "Number to Words test (en_US-filters)",
+                description : "Converts digits (up to 10^303) to their word equivalent.",
+                template : "%=range=2-1000=save-result=n% = %n=number-to-words%"
             }
         };
     }

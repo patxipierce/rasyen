@@ -101,7 +101,7 @@ var Rasyen = {
                 });
             }
 
-            list.replace = Rasyen.random_range(ranges[0], ranges[1]);
+            list.replace = Rasyen.random_range(ranges[0], ranges[1]).toString();
             return list;
         },
 
@@ -245,6 +245,16 @@ var Rasyen = {
         return obj;
     },
     
+    // Flip object keys : values to value : keys
+    flip_obj : function(obj){
+        jbo = {};
+        for(var k in obj){
+            if(!obj.hasOwnProperty(k)) continue;
+            jbo[obj[k]] = k;
+        }
+        return jbo;
+    },
+
     // Merges objects this.extend_obj(old, new, newer, newest, etc...);
     extend_obj : function(){
         for(var i = 1; i < arguments.length; i++) {
@@ -427,6 +437,7 @@ var Rasyen = {
             if(list.filter){
                 for (var n = 0; n < list.filter.length; n++) {
                     var fn = list.filter[n];
+//console.log(list.filter[n]);
                     if(typeof this.filters[fn] === 'function'){
                         list = this.filters[fn](list);
                     }
