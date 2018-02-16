@@ -1,6 +1,6 @@
 /*
 *
-*   RaSyEn - Random Syntax Engine v2.0.0
+*   RaSyEn - Random Syntax Engine
 *   Docs available at code.patxipierce.com/rasyen/
 *
 */
@@ -9,7 +9,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '2.0.0',
+    version : '2.0.1',
     lists : {},
     saved_keys : [],
     removed_items : [],
@@ -21,9 +21,10 @@ var Rasyen = {
 
     // Callbacks
     callback : {
-        parse          : function(parsed){ return parsed; },
-        parse_template : function(parsed){ return parsed; },
-        parse_tag      : function(parsed){ return parsed; },
+        parse_template : function(tpl_obj){ return tpl_obj; },
+        parse_tag      : function(tag_obj){ return tag_obj; },
+        parse_list     : function(list_obj){ return list_obj; },
+        parse_filters  : function(list_obj){ return list_obj; }
     },
 
     // Filters: Available to the syntax engine
@@ -65,10 +66,10 @@ var Rasyen = {
             if( typeof list.replace === 'string' && list.replace.length !== ''){
                 
                 // Get parameter
-                var idx = list.filter.indexOf('words') + 1;
+                var idx = list.parsed_filters.indexOf('words') + 1;
 
-                if(list.filter.length >= idx){
-                    var params = list.filter.slice(idx * -1);
+                if(list.parsed_filters.length >= idx){
+                    var params = list.parsed_filters.slice(idx * -1);
 
                     list.replace = list.replace.split(' ').map(function(w){
                         for (var i = 0; i < params.length; i++) {
@@ -79,7 +80,7 @@ var Rasyen = {
                                     name : list.name,
                                     categories : list.categories, 
                                     replace : w,
-                                    filter : params[i]
+                                    parsed_filters : params[i]
                                 }).replace;
                             }                        
                         }
@@ -91,12 +92,12 @@ var Rasyen = {
             return list;
         },
 
-        // %=range=2-24% will select a random positive number between 2 and 24.
+        // %=range=2-24% will select a random number between 2 and 24.
         'range' : function(list){
             var ranges = [1,64]; // default random range
 
-            if(list.filter.length >= 2){
-                ranges = list.filter[1].split('-').map(function(x) {
+            if(list.parsed_filters.length >= 2){
+                ranges = list.parsed_filters[1].split('-').map(function(x) {
                    return Number(x);
                 });
             }
@@ -123,9 +124,9 @@ var Rasyen = {
         // %list-name=save-result=saved-list-name% - Saves a result into a temp list
         'save-result' : function(list) {
             if(typeof list.replace === 'string'){
-                var saved_key = list.filter[list.filter.indexOf('save-result')+1];
+                var saved_key = list.parsed_filters[list.parsed_filters.indexOf('save-result')+1];
                 if(typeof saved_key == 'string'){
-                    Rasyen.list_save_item(list.replace, saved_key);
+                    list.replace = Rasyen.list_save_item(list.replace, saved_key);
                 }
             }
             return list;
@@ -133,7 +134,7 @@ var Rasyen = {
 
         // %list-name=category=saved-list-name% - will use %saved-list-name% string as a category in %list-name%
         'category' : function(list) {
-            var saved_key = list.filter[list.filter.indexOf('category')+1];
+            var saved_key = list.parsed_filters[list.parsed_filters.indexOf('category')+1];
             if(typeof saved_key == 'string' && typeof Rasyen.lists[saved_key] == 'object'){
                 var list_key = Rasyen.random_str(Rasyen.lists[saved_key]);
                 var list_corpus = Rasyen.lists[list.name];
@@ -169,6 +170,28 @@ var Rasyen = {
                         break;
                     }
                 }
+            }
+            return list;
+        },
+
+        // %['json','string']=inline=list-name% - Will parse an in line list and save it
+        'inline' : function(list){
+            var list_name = list.parsed_filters[list.parsed_filters.indexOf('inline')+1];
+            var list_data = false;
+
+            // Check to see if its valid JSON
+            try{
+                list_data = JSON.parse(list.name);
+            }catch(e){
+                console.log('Invalid JSON', list.name);
+            }
+
+            if(list_data){
+                if(typeof list_name != 'undefined'){
+                    list.name = list_name;
+                    Rasyen.list_load(list_name, list_data);
+                }
+                list.replace = Rasyen.random_str(list_data)
             }
             return list;
         }
@@ -294,6 +317,7 @@ var Rasyen = {
             this.lists[name] = [];
         }
         this.lists[name].push(result);
+        return result;
     },
 
     // Removes an item from an existing list
@@ -380,87 +404,105 @@ var Rasyen = {
     /*
     *   Parsing
     */
-    
+
+    // For each filter
+    parse_filters : function(list){
+
+        // Apply automatic filters
+        if(typeof this.filters[list.name] == 'function'){
+            list = this.callback.parse_filters(this.filters[list.name](list));
+        }
+
+        // Apply filter functions
+        if(list.parsed_filters){
+            for (var n = 0; n < list.parsed_filters.length; n++) {
+                var fn = list.parsed_filters[n];
+                if(typeof this.filters[fn] === 'function'){
+                    // Call filter
+                    list = this.callback.parse_filters(this.filters[fn](list));
+                }
+            }
+        }
+
+        return list;
+    },
+
+    // For each list in a tag
+    parse_list : function(list_name){
+
+        var list = {
+            name     : list_name,
+            categories : false,
+            replace  : false,
+            parsed_filters : false
+        };
+        
+        // Get array with filters
+        var fns = list.name.split('=');
+        if(fns.length > 1){
+            list.name   = fns.shift();
+            list.parsed_filters = fns;
+        }
+
+        // Check for categories
+        var cats = list.name.split('@');
+        if(cats.length > 1){
+            list.name = cats.shift();
+            list.categories = [];
+            for (var n = 0; n < cats.length; n++) {
+                list.categories.push(cats[n]);
+            }
+        }
+
+        // Magic Part: Add replacement string
+        if(this.lists.hasOwnProperty(list.name)){
+            // Attempt to apply category if any...
+            if(list.categories){
+                list.replace = this.random_str(this.navigate_obj(this.lists[list.name], list.categories));
+            }else{
+                list.replace = this.random_str(this.lists[list.name]);
+            }
+            // Apply Filters:
+            list = this.parse_filters(list);
+        }
+
+        return this.callback.parse_list(list);
+    },
+
     // Parses a single "%tag%" from the template string 
     parse_tag : function(tag){
 
         // Remove %'s
         var cmd = tag.slice(1, -1);
-        
-        // array with lists in tag
-        var list_tags = cmd.split('|');
-        var lists = [];
-        for (var i = 0; i < list_tags.length; i++) {
-
-            var list = {
-                name     : list_tags[i],
-                categories : false,
-                replace  : false,
-                filter   : false
-            };
-            
-            // Get array with filters
-            var fns = list.name.split('=');
-            if(fns.length > 1){
-                list.name   = fns.shift();
-                list.filter = fns;
-            }
-
-            // Check for categories
-            var cats = list.name.split('@');
-            if(cats.length > 1){
-                list.name = cats.shift();
-                list.categories = [];
-                for (var n = 0; n < cats.length; n++) {
-                    list.categories.push(cats[n]);
-                }
-            }
-
-            // Add replacement string
-            if(this.lists.hasOwnProperty(list.name)){
-                // Attempt to apply category if any...
-                if(list.categories){
-                    list.replace = this.random_str(this.navigate_obj(this.lists[list.name], list.categories));
-                }else{
-                    list.replace = this.random_str(this.lists[list.name]);
-                }
-            }
-
-            // Filters:
-
-            // Apply filter to list if it has a function assigned.
-            if(typeof this.filters[list.name] == 'function'){
-                list = this.filters[list.name](list);
-            }
-
-            // Apply filter function if any
-            if(list.filter){
-                for (var n = 0; n < list.filter.length; n++) {
-                    var fn = list.filter[n];
-                    if(typeof this.filters[fn] === 'function'){
-                        list = this.filters[fn](list);
-                    }
-                }
-            }
-
-            // For callback
-            lists.push(list);
-        }
-        
-        // Prepare ONE random output string.
-        output = [];
-        for (var i = 0; i < lists.length; i++) {
-            if(lists[i].replace){
-                output.push(lists[i].replace);    
-            }
-        }
-
-        //This will return {parsed:..., output:...};
-        return this.callback.parse_tag({
+        var tag_obj = {
             tag : tag,
-            output : (output.length) ? this.rai(output) : tag,
-            parsed : lists
-        });
+            output : tag,
+            parsed_lists : []
+        };
+
+        // Array with lists in tag
+        var list_tags = cmd.split('|');
+        var output = [];
+        for (var i = 0; i < list_tags.length; i++) {
+            var list = this.parse_list(list_tags[i]);
+            
+            // output on every iteration because of filters
+            if(list.replace){
+                output.push(list.replace);
+                tag_obj.output = this.rai(output);
+            }
+            var fst = list_tags[i].charAt(0);
+            if( fst == '=' || fst == '[' || fst == '{'){
+                // Update list value to latest and apply filters
+                list.replace = tag_obj.output;
+                list = this.parse_filters(list);
+                tag_obj.output = list.replace;
+            }
+
+            tag_obj.parsed_lists.push(list);
+        }
+
+        return this.callback.parse_tag(tag_obj);
     },
 
     // Parses a template string
@@ -474,7 +516,7 @@ var Rasyen = {
             return tpl;
         }
         
-        var parsed = {
+        var tpl_obj = {
             template : tpl,
             parsed_tags : []
         };
@@ -482,12 +524,10 @@ var Rasyen = {
         var tags_len = tags.length;
         for (var i = 0; i < tags_len; i++) {
             var tag = tags[i];
-            parsed.parsed_tags.push(this.parse_tag(tag));
+            tpl_obj.parsed_tags.push(this.parse_tag(tag));
         }
-        
-        parsed = this.callback.parse_template(parsed);
-        
-        return parsed;
+
+        return this.callback.parse_template(tpl_obj);
     },
 
     // The main parse function.
@@ -503,8 +543,6 @@ var Rasyen = {
                 tpl = tpl.replace(clean_tag, parsed_tag.output);
             }
         }
-
-        parsed_tpl = this.callback.parse(parsed_tpl);
         
         // Reset all list saved data and removed items
         this.lists_reset();

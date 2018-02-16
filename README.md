@@ -8,7 +8,7 @@ __________          _________      ___________
         \/      \/        \/\/             \/     \/ 
 ```
 
-## RaSyEn - Random Syntax Engine v.2.0.0
+## RaSyEn - Random Syntax Engine v.2.0.1
 
 Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
 
@@ -179,12 +179,12 @@ You can also use these callback functions to edit core functionalities.
 
 - `Rasyen.callback` _object_
     - Is an object containing callbacks for the parse methods, to make it possible to add custom code to parsing these are:
-        - `Rasyen.callback.parse_tag(data)` _function_
-            - Called when a tag in a template is processed. Must always return the passed data.
         - `Rasyen.callback.parse_template(data)` _function_
             - Called once when a template is parsed. Must always return the passed data.
-        - `Rasyen.callback.parse(data)` _function_
-            - Called once after the parse method is called. Must always return the passed data.
+        - `Rasyen.callback.parse_tag(data)` _function_
+            - Called when a tag in a template is processed. Must always return the passed data.
+        - `Rasyen.callback.parse_list(data)` _function_
+            - Called at the end of every list parsed. Must always return the passed data.
 
 ### Filters
 
@@ -213,7 +213,9 @@ Pre-built filters are:
 - `=remove-result`
     - Will remove the result from the list to it cannot appear again in other tag calls.
 - `=meta`
-     - Evaluates the tag again to check for more tags in the result string.
+    - Evaluates the tag again to check for more tags in the result string.
+- `=inline`
+    - Will attempt to parse any JSON set before it and return a random result. It can also save the parsed JSON to a list if a second argument is provided.
 
 English Filters:
 
@@ -230,13 +232,15 @@ These filters are located in the `filters/en_US-filters.js` file. It is **not** 
 - `=number-to-words`
     - Converts a number from digits to its word representation.
 
+There is an ever-growing [test file](http://code.patxipierce.com/rasyen/tests.html) where you can see every filter in action.
+
 ## Examples:
 
 You can use filters on lists to do a specific thing with the randomly returned result.
 
 ### Basic filters
 
-A filter is usually prefixed by a list name it applies to, so if your list is named _fruit_ containing a single item _banana_, its tag in the template would be "%fruit%" and to apply the _=to-upper_ filter you would add it to the tag resulting in `%fruit=to-upper%` which would produce _BANANA_.
+A filter is usually prefixed by a list name it applies to, so if your list is named "_fruit_" containing a single item "_banana_", its tag in the template would be "_%fruit%_", and to apply the "_=to-upper_" filter you would add it to the tag resulting in `%fruit=to-upper%` which would produce "_BANANA_".
 
 ```js
 // Add a list called "insect"
@@ -249,14 +253,16 @@ Rasyen.list_load("insect", [
 // Parse
 
 var template = "%insect=first-to-upper% and %insect=to-lower%.";
-var out =  Rasyen.parse(template); // → "Moth and moth."
+var out =  Rasyen.parse(template);
+// → "Moth and moth."
 
-// Or combine filters
+// Combining filters
 
-out = Rasyen.parse("%insect=to-lower=first-to-upper%."); // → "Mantis."
+out = Rasyen.parse("%insect=to-lower=first-to-upper%.");
+// → "Mantis." || "Moth."
 ```
 
-Remember, filter order *matters* and they will be applied **from left to right**, so:
+Remember, filter order _matters_ and they will be applied **from left to right**, so:
 
 ```js
 
@@ -267,9 +273,8 @@ Rasyen.list_load("title", [
     "Miss"
 ]);
 
-// Parse
-
-var out = Rasyen.parse("%title=to-lower=to-upper%"); // → "MISS" or "MRS"
+var out = Rasyen.parse("%title=to-lower=to-upper% Parker");
+// → "MISS Parker" || "MRS Parker"
 ```
 
 Or use filters to do grammatical prefixing:
@@ -350,7 +355,8 @@ Rasyen.lists_load({
 
 // Parse
 var template = "%name@male% was feeling %adjective%.";
-var out = Rasyen.parse(template); // → "Gandalf was feeling happy."
+var out = Rasyen.parse(template);
+// → "Gandalf was feeling happy." || "Tom Bombadil was feeling lazy." || ...
 
 // Combine male hobbit names and female using the "|" pipe character
 
@@ -378,13 +384,20 @@ Rasyen.lists_load({
 // Save title to "t1" and feeling to "f1" and use them later
 
 var template = "%title=save-result=t1% was %feeling=save-result=f1%, %t1% was always %f1%";
-var out      =  Rasyen.parse(template); // → "she was sad, she was always sad"
+var out      =  Rasyen.parse(template);
+// → "she was sad, she was always sad"
 
 
 // You can also remove items so they don't show up twice
 
 template = "%title=remove-result% knew %title% would do it";
-out = Rasyen.parse(template); // → "she knew he would do it"
+out = Rasyen.parse(template);
+// → "she knew he would do it"
+
+// Or mix two lists and save the result
+template = "%feeling|title|=save-result=new-result% is %new-result%.";
+out = Rasyen.parse(template);
+// → "sad is sad." || "she is she" || ...
 ```
 
 ### Category Filter
@@ -412,7 +425,8 @@ var template = [
     "there was a brave little %house=category=room%"
 ];
 
-var out = Rasyen.parse(template.join(" ")); // → "In the kitchen there was a brave little toaster";
+var out = Rasyen.parse(template.join(" "));
+// → "In the kitchen there was a brave little toaster" || ...
 ```
 
 In the example above by saving the category name you can use it to select the pertinent list item further down the road.
@@ -587,13 +601,13 @@ var out = Rasyen.parse("%color%");
 
 ### Sans-list Filters
 
-You can even call a filter without a list. For example if you want a random number in a certain range you could use this.
+You can even call a filter without a list. For example:
 
 ```js
 
-// A filter to select a random number in a range of numbers.
+// A filter to include
 
-Rasyen.filters['range'] = function(list){
+Rasyen.filters['my-range'] = function(list){
     var ranges = [1,64]; // default random range
 
     if(list.filter.length >= 2){
@@ -697,4 +711,4 @@ var out = Rasyen.parse("Its %meta=a-or-an%");
 Check out these projects that use RaSyEn:
 
 - [RaSyEn demo](http://code.patxipierce.com/rasyen/tests.html) tries to reproduce all of RaSyEn's features in a simple fashion.
-- The [RPG inspiration generator](http://patxipierce.com/rpg/inspiration/) uses AJAX loaded lists to produce fantasy and sci-fi.
+- The [RPG inspiration generator](http://patxipierce.com/rpg/inspiration/) uses AJAX loaded lists to produce fantasy and sci-fi snippets.

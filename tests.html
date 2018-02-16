@@ -146,7 +146,7 @@
             <ul id="tests">
                 <li>
                     <h3>Callback test:</h3>
-                    <div class="result"><p>Parse: <span id="count-parse">0</span>, Templates: <span id="count-templates">0</span>, Tags: <span id="count-tags">0</span>.</p></div>
+                    <div class="result"><p>Templates: <span id="count-templates">0</span>, Tags: <span id="count-tags">0</span>, Lists: <span id="count-lists">0</span>, Filters: <span id="count-filters">0</span>.</p></div>
                 </li>
             </ul>
         </article>
@@ -254,11 +254,12 @@
 
             // Pronoun tests
             "pronoun": ["he","she","they","fae","ae","ey","per","ve","xe","ze"],
+            "person" : ["Sam","Ryan","Peach"],
             "opinion" : [
-                "It's his; they said.",
+                "It's His; they said.",
                 "The pronoun card is theirs.",
                 "His favourite color is unknown.",
-                "They tried to convince her that asexuality does not exist.",
+                "They tried to convince HER that asexuality does not exist.",
                 "He laughed at the notion of gender binary."
             ],
             
@@ -308,6 +309,11 @@
                 description : "",
                 template : "%geography=random-category=save-result=saved-key% %geography=category=saved-key%"
             },
+            "mixed-save-filter-test" : {
+                name : "Save-result with several mixed lists (uses parameters)",
+                description : "Mix two lists and expect the result of both to be the same.",
+                template : "%geography|digit|number|=save-result=number-or-digit% == %number-or-digit%"
+            },
             "filter-alone-test" : {
                 name : "Filter alone test (uses parameters)",
                 description : "",
@@ -323,6 +329,11 @@
                 description : "",
                 template : "Its %animal=meta=a-or-an%"
             },
+            "filter-inline-test" : {
+                name : "In-line filter test",
+                description : "A filter that requires no list but can save a list.",
+                template : "%[\"hello\",\"hey\",\"greetings\"]=inline=inline-list% and %inline-list%"
+            },
             "plural-singular-filter-test" : {
                 name : "Plural to singular test (en_US-filters)",
                 description : "A very simple (and not very thorough) function convert from singular to plural and back.",
@@ -331,7 +342,7 @@
             "pronoun-swap-test" : {
                 name : "Pronoun swap test (en_US-filters)",
                 description : "Searches for the first pronoun in a phrase and changes to a designated pronoun in an entire phrase.",
-                template : "\"%opinion=save-result=op%\" + \"%pronoun=save-result=pn%\" = \"%op=pronoun-swap=pn%\""
+                template : "\"%opinion=save-result=op%\" + \"%pronoun|person|=save-result=pn%\" = \"%op=pronoun-swap=pn%\""
             },
             "number-to-words-test" : {
                 name : "Number to Words test (en_US-filters)",
@@ -349,10 +360,11 @@
     function create_template_html(templates){
         var ul = document.getElementById('tests');
 
-        for(tpl in templates){
+        for(var tpl in templates){
             if(!templates.hasOwnProperty(tpl)) continue;
             
             var li = document.createElement('li');
+            li.id = tpl;
             
             // Title div
             var h3 = document.createElement('h3');
@@ -408,14 +420,6 @@
     *   Callback examples
     */
     function load_callbacks(){
-        // Will run once for every parse call
-        Rasyen.callback.parse = function(parsed){
-
-            var parse_count = document.getElementById('count-parse'); 
-            parse_count.innerHTML = Number(parse_count.innerHTML) + 1;
-
-            return parsed;
-        }
 
         // Will run once for every template
         Rasyen.callback.parse_template = function(parsed){
@@ -424,22 +428,40 @@
             tpl_count.innerHTML = Number(tpl_count.innerHTML) + 1;
 
             return parsed;
-        }
+        };
 
-        // Will run on every tag of a template
-        Rasyen.callback.parse_tag = function(parsed){
+        // Will run on every tag in a template
+        Rasyen.callback.parse_tag = function(tag_obj){
 
             var tag_count = document.getElementById('count-tags'); 
             tag_count.innerHTML = Number(tag_count.innerHTML) + 1;
 
-            return parsed;
-        }
+            return tag_obj;
+        };
+
+        // Will run on every list in a tag
+        Rasyen.callback.parse_list = function(list_obj){
+
+            var tag_count = document.getElementById('count-lists'); 
+            tag_count.innerHTML = Number(tag_count.innerHTML) + 1;
+
+            return list_obj;
+        };
+
+        // Will run on every filter
+        Rasyen.callback.parse_filters = function(list_obj){
+
+            var tag_count = document.getElementById('count-filters'); 
+            tag_count.innerHTML = Number(tag_count.innerHTML) + 1;
+
+            return list_obj;
+        };
     }
 
     // Parse the content of the text inputs
     function test_all(){
         var tpls = load_tempates();
-        for(tpl in tpls){
+        for(var tpl in tpls){
             if(!tpls.hasOwnProperty(tpl)) continue;
             document.getElementById(tpl+'-out').innerHTML = Rasyen.parse(document.getElementById(tpl+'-tpl').value);            
         }
@@ -522,7 +544,7 @@
                     }
                 };
             }else if(obj instanceof Object){
-                for(key in obj){
+                for(var key in obj){
                     if(!obj.hasOwnProperty(key)) continue;
                     
                     if(obj[key] instanceof Array){

@@ -198,6 +198,23 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
         'ze'    : ['ze','hir','hir','hirs','hirself','Ze','Hir','Hir','Hirs','Hirself','ZE','HIR','HIR','HIRS','HIRSELF']
     };
 
+    // For number to words
+    Rasyen.options['units'] = [ // skip zero
+        'one', 'two', 'three', 'four', 'five',
+        'six', 'seven', 'eight', 'nine', 'ten',
+        'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen',
+        'sixteen', 'seventeen', 'eighteen', 'nineteen'
+    ];
+    Rasyen.options['tens'] = [ // skip tens
+        'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'
+    ];
+    Rasyen.options['scales'] = [ // skip hundreds
+        'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion',
+        'sextillion', 'septillion', 'octillion', 'nonillion', 'decillion',
+        'undecillion', 'duodecillion', 'tredecillion', 'quatttuor-decillion', 'quindecillion',
+        'sexdecillion', 'septen-decillion', 'octodecillion', 'novemdecillion', 'vigintillion', 'centillion'
+    ];
+
     /* MAY THE FILTERS BEGIN */
 
     // %list-name=a-or-an% - Returns A or An, depending on input.
@@ -211,26 +228,34 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
     // %list-name=pronoun-swap=[Name] | [list-name] | he/she/they/fae/ae/ey/per/ve/xe/ze%
     // - Finds the first pronoun in the result and converts the phrase to a different specified pronoun.
     Rasyen.filters['pronoun-swap'] = function (list){
-        if(typeof list.replace === 'string' && list.replace !== '' && typeof list.filter[1] != 'undefined'){
-            
+        if(typeof list.replace === 'string' && list.replace !== '' && typeof list.parsed_filters[1] != 'undefined'){
+ 
             var pronouns = Rasyen.options['pronouns'];
             var str = list.replace;
             var str_parts = str.replace(/[^a-zA-Z\s]+/g, '').split(' ');
-            var gender = list.filter[list.filter.indexOf('pronoun-swap')+1];
+            var gender = list.parsed_filters[list.parsed_filters.indexOf('pronoun-swap')+1];
 
             // If gender is a list get an item from it
             // This is used to be able to change a gender randomly
-            gender = Rasyen.list_get(gender);
-            if(gender && gender.length){
-                gender = Rasyen.rai(gender);
+            var gender_list = Rasyen.list_get(gender);
+            if(gender_list && gender_list.length){
+                gender = Rasyen.random_str(gender_list);
             }
 
             // If not in pronouns use the gender string as Name.
             // eg. "Alan was tired, Alan wanted a break."
             if(!pronouns.hasOwnProperty(gender)){
                 pronouns[gender] = [];
-                for(var i=0; i<5; i++){
-                    pronouns[gender].push(gender);
+                for(var i=0; i<15; i++){
+                    var pn = gender;
+                    pn = pn.charAt(0).toUpperCase() + pn.slice(1);
+                    if(i > 9) pn = pn.toUpperCase();
+                    if((i > 1 && i < 4)
+                        || (i > 6 && i < 9)
+                        || (i > 11 && i < 14)){
+                        pn = pn+"'s";
+                    }
+                    pronouns[gender].push(pn);
                 }
             }
 
@@ -328,21 +353,21 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
             var n = list.replace;
             var string = n.toString(), units, tens, scales, start, end, chunks, chunks_len, chunk, ints, i, word, words, and = 'and';
 
-            /* Is number zero? */
+            // Is zero?
             if( parseInt( string ) === 0 ) {
                 return 'zero';
             }
 
-            /* Array of units as words */
-            units = [ '', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen' ];
+            // Array of units as words, skip zero
+            units = [''].concat(Rasyen.options.units);
 
-            /* Array of tens as words */
-            tens = [ '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety' ];
+            // Array of tens as words, skip singles and tens
+            tens = [ '', '' ].concat(Rasyen.options.tens);
 
-            /* Array of scales as words */
-            scales = [ '', 'thousand', 'million', 'billion', 'trillion', 'quadrillion', 'quintillion', 'sextillion', 'septillion', 'octillion', 'nonillion', 'decillion', 'undecillion', 'duodecillion', 'tredecillion', 'quatttuor-decillion', 'quindecillion', 'sexdecillion', 'septen-decillion', 'octodecillion', 'novemdecillion', 'vigintillion', 'centillion' ];
+            // Array of scales as words. skip hundreds
+            scales = [''].concat(Rasyen.options.scales);
 
-            /* Split user arguemnt into 3 digit chunks from right to left */
+            // Split user arguemnt into 3 digit chunks from right to left
             start = string.length;
             chunks = [];
             while( start > 0 ) {
@@ -350,59 +375,53 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
                 chunks.push( string.slice( ( start = Math.max( 0, start - 3 ) ), end ) );
             }
 
-            /* Check if function has enough scale words to be able to stringify the user argument */
+            // Check if function has enough scale words to be able to stringify the user argument
             chunks_len = chunks.length;
             if( chunks_len > scales.length ) {
                 return '';
             }
 
-            /* Stringify each integer in each chunk */
+            // Stringify each integer in each chunk
             words = [];
             for( i = 0; i < chunks_len; i++ ) {
-
                 chunk = parseInt( chunks[i] );
-
                 if( chunk ) {
-
-                    /* Split chunk into array of individual integers */
+                    // Split chunk into array of individual integers
                     ints = chunks[i].split( '' ).reverse().map( parseFloat );
 
-                    /* If tens integer is 1, i.e. 10, then add 10 to units integer */
+                    // If tens integer is 1, i.e. 10, then add 10 to units integer
                     if( ints[1] === 1 ) {
                         ints[0] += 10;
                     }
 
-                    /* Add scale word if chunk is not zero and array item exists */
+                    // Add scale word if chunk is not zero and array item exists
                     if( ( word = scales[i] ) ) {
                         words.push( word );
                     }
 
-                    /* Add unit word if array item exists */
+                    // Add unit word if array item exists
                     if( ( word = units[ ints[0] ] ) ) {
                         words.push( word );
                     }
 
-                    /* Add tens word if array item exists */
+                    // Add tens word if array item exists
                     if( ( word = tens[ ints[1] ] ) ) {
                         words.push( word );
                     }
 
-                    /* Add 'and' string after units or tens integer if: */
+                    // Add 'and' string after units or tens integer if:
                     if( ints[0] || ints[1] ) {
-                        /* Chunk has a hundreds integer or chunk is the first of multiple chunks */
+                        // Chunk has a hundreds integer or chunk is the first of multiple chunks
                         if( ints[2] && (! i && chunks_len) ) {
                             words.push( and );
                         }
-
                     }
 
-                    /* Add hundreds word if array item exists */
+                    // Add hundreds word if array item exists
                     if( ( word = units[ ints[2] ] ) ) {
                         words.push( word + ' hundred' );
                     }
-
                 }
-
             }
 
             var words = words.reverse().join( ' ' );
