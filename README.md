@@ -616,7 +616,7 @@ Rasyen.filters['smile'] = function(list){
 
 // And then:
 
-var out = Rasyen.parse("%=smile%");
+var out = Rasyen.parse("Look: %=smile% a smile!");
 ```
 
 ### Callbacks
