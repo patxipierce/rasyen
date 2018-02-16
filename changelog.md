@@ -15,7 +15,8 @@ An account of all that has happened and future plans.
 - **2.0.1**
     - Added the =inline core filter.
     - Fixed a bug related to `save-results` and joining lists.
-    - Tuned the `pronoun-swap`, and the `to-plural` en_US filter
+    - Tuned the `pronoun-swap`, and the `to-plural` en_US filter.
+    - Added the filters callback.
 
 - **2.0.0**
     - Changed to two-digit versioning. Moving fast y'all :rocket:

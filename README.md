@@ -185,6 +185,8 @@ You can also use these callback functions to edit core functionalities.
             - Called when a tag in a template is processed. Must always return the passed data.
         - `Rasyen.callback.parse_list(data)` _function_
             - Called at the end of every list parsed. Must always return the passed data.
+        - `Rasyen.callback.parse_filters(data)` _function_
+            - Called at the end of every filter. Must always return the passed data.
 
 ### Filters
 
@@ -557,7 +559,7 @@ Rasyen.list_load("happy", [
 Rasyen.filters['smile'] = function(list){
     list.replace = list.replace+' ^_^';
     return list;
-}
+};
 var out = Rasyen.parse("be %happy=smile%");
 ```
 
@@ -593,7 +595,7 @@ Rasyen.filters['color'] = function(list){
         list.replace = '<span style="color:'+col[1]+'">'+col[0]+'</span>';
     }
     return list;
-}
+};
 
 // Now every time this list is called the function above will run.
 var out = Rasyen.parse("%color%");
@@ -601,108 +603,34 @@ var out = Rasyen.parse("%color%");
 
 ### Sans-list Filters
 
-You can even call a filter without a list. For example:
+Filters don't necessarily have to come after a list name. For example:
 
 ```js
 
-// A filter to include
+// A filter to include a smile
 
-Rasyen.filters['my-range'] = function(list){
-    var ranges = [1,64]; // default random range
-
-    if(list.filter.length >= 2){
-        ranges = list.filter[1].split('-').map(function(x) {
-           return Number(x);
-        });
-    }
-    list.replace = Rasyen.random_range(ranges[0], ranges[1]);
+Rasyen.filters['smile'] = function(list){
+    list.replace = '^_^';
     return list;
-}
+};
 
-// To get a random number between 2 and 24 you would do.
+// And then:
 
-var out = Rasyen.parse("%=range=2-24%");
-
+var out = Rasyen.parse("%=smile%");
 ```
-
-Note how in the example above we pass the random range numbers to the filter as if they were a filter call. There are many other ways to do this, but if you are going to be passing strings it is recommended that you pass parameters from the list instead as the use of reserved characters such as `|`,`=`, `@`, or `%` will be parsed.
 
 ### Callbacks
 
-Three callbacks allow you to manipulate information in different parts of the parsing process.
+Callbacks allow you to manipulate information in different parts of the parsing process. The callback functions are also extremely useful when debugging.
 
 ```js
 
-// Load a color, geography and animal list
-Rasyen.lists_load({
-    "color" : [
-        "black",
-        "white",
-        "brown",
-        "green"
-    ],
-    "geography" : { 
-        "water" : [
-            "gulf",
-            "lake",
-            "river",
-            "sea",
-            "ocean"
-        ],
-        "land" : [
-            "cliff",
-            "desert",
-            "canyon",
-            "mountain"
-        ]
-    },
-    "animal" : {
-        "land": [
-            "dog",
-            "cat",
-            "goat"
-        ],
-        "water": [
-            "goldfish",
-            "swordfish"
-        ]
-    }
-});
-
-
-// Now load a special meta list
-
-Rasyen.list_load( "meta", [
-    "%color% %animal% and a %meta%", // calling %meta% in meta
-    "%color% %animal%",
-    "%animal% that is %color%",
-    "%animal@water% from %geography@water%"
-]);
-
-// Use a callback to run this function on every tag of a parsed template.
-
 Rasyen.callback.parse_tag = function(parsed){
-    
-    if(!parsed.output || typeof parsed.output != 'string'){
-        return parsed;
-    }
-
-    // To avoid a circular reference buckle there is a maximum recursion limit.
-
-    var max_depth = Rasyen.options.max_recursion; // 10 by default
-    var tags = parsed.output.match(/%(.*?)%/g);
-    for (var i = 0; i <= max_depth; i++) {
-        parsed.output = Rasyen.parse(parsed.output);
-        tags = parsed.output.match(/%(.*?)%/g);
-        if(!tags) break;
-    }
-
+    // For debugging
+    console.log(parsed);
     return parsed;
-}
+};
 
-// Now every time this list is called the sub-tags will be parsed
-
-var out = Rasyen.parse("Its %meta=a-or-an%");
 ```
 
 
