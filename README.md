@@ -531,7 +531,8 @@ Rasyen.list_load("elf", {
     "name" : "%elf@a%%elf@b%" // For use with the =meta filter
 });
 
-var template = "Your elf name is %elf@name=meta%."; // → "Your elf name is Arayra."
+var template = "Your elf name is %elf@name=meta%."; 
+// → "Your elf name is Arayra."
 
 // Or store the name as %elf-name%
 template = "This elf is called %elf@name=meta=save-result=elf-name%.";
@@ -616,7 +617,8 @@ Rasyen.filters['smile'] = function(list){
 
 // And then:
 
-var out = Rasyen.parse("Look: %=smile% a smile!");
+var out = Rasyen.parse("%=smile% a wild smile appears!");
+// → "^_^ a wild smile appears!"
 ```
 
 ### Callbacks
