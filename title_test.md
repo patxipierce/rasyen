@@ -33,6 +33,6 @@ table - pre per line
 |:------:|
 
  <!-- empty table header -->
-|                                                  |
+| ================================================ |
 |:------------------------------------------------:|
 | I'm centered! | <!-- cell gets column's alignment -->
