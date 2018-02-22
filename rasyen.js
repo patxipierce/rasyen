@@ -535,6 +535,7 @@ var Rasyen = {
         
         var parsed_tpl = this.parse_template(tpl);
         
+        // After parsing the template proceed to replace its tags
         if(parsed_tpl.hasOwnProperty('parsed_tags')){
             for (var i = 0; i < parsed_tpl.parsed_tags.length; i++) {
                 var parsed_tag = parsed_tpl.parsed_tags[i];

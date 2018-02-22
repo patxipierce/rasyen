@@ -1,4 +1,5 @@
 
+<div id="ascii-art-title">
 ```ascii-art
 __________          _________      ___________       
 \______   \_____   /   _____/__.__.\_   _____/ ____  
@@ -7,6 +8,7 @@ __________          _________      ___________
  |____|_  /(____  /_______  / ____|/_______  /___|  /
         \/      \/        \/\/             \/     \/ 
 ```
+</div>
 
 ## RaSyEn - Random Syntax Engine v.2.0.1
 
@@ -36,7 +38,6 @@ The most basic usage of RaSyEn could look like this.
 
 ```js
 // Load (list name, Array or Object)
-
 Rasyen.list_load("first-part", [
     "Ae","Ara","Bal","Ylla","Zin","Zyl"
 ]);
@@ -46,11 +47,9 @@ Rasyen.list_load("second-part", [
 ]);
 
 // Templates use tags like %list-name% to produce random output.
-
 var template = "Your elf name is %first-part%-%second-part%.";
 
 // Parse the template
-
 var out = Rasyen.parse(template); 
 // → "Your elf name is Ara-yra."
 ```
@@ -59,7 +58,6 @@ Or consider this other example:
 
 ```js
 // Load a "story list"
-
 Rasyen.list_load("story", {
     "name"   : [
         "Ben",
@@ -79,9 +77,7 @@ Rasyen.list_load("story", {
 });
 
 // Parse three tags
-
-var template = "%story@name% %story@action% %story@result%.";
-var out = Rasyen.parse(template);
+var out = Rasyen.parse("%story@name% %story@action% %story@result%.");
 ```
 
 The value of `out` could be...
@@ -398,6 +394,7 @@ out = Rasyen.parse(template);
 
 // Or mix two lists and save the result
 template = "%feeling|title|=save-result=new-result% is %new-result%.";
+
 out = Rasyen.parse(template);
 // → "sad is sad." || "she is she" || ...
 ```
@@ -537,7 +534,8 @@ var template = "Your elf name is %elf@name=meta%.";
 // Or store the name as %elf-name%
 template = "This elf is called %elf@name=meta=save-result=elf-name%.";
 
-var out = Rasyen.parse(template); // → "Your elf name is Arayra."
+var out = Rasyen.parse(template);
+// → "This elf is called Arayra."
 ```
 This looks like the first example, with a key difference, now that you are using only one tag you can save it using the `=save-result` filter.
 

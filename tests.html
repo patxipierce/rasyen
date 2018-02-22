@@ -18,6 +18,8 @@
 
         /* Styles */
         body {
+            height: 100%;
+            min-height: 100%;
             margin: 0; 
             padding: 0;
             color: #ddd;
@@ -34,8 +36,6 @@
             
             background-repeat: no-repeat;
             background-attachment: fixed;
-
-            min-height: 100%;
         }
         h1, h2, h3, h4 { margin: 15px 0; }
         h1 { font-size: 200%; }
@@ -332,7 +332,7 @@
             "filter-inline-test" : {
                 name : "In-line filter test",
                 description : "A filter that requires no list but can save a list.",
-                template : "%[\"hello\",\"hey\",\"greetings\"]=inline=inline-list% and %inline-list%"
+                template : "%[\"Hello\",\"Hey\",\"Greetings\"]=inline=inline-list%, said Arthur. %inline-list%, replied Guinevere."
             },
             "plural-singular-filter-test" : {
                 name : "Plural to singular test (en_US-filters)",
