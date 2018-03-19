@@ -177,20 +177,20 @@ var Rasyen = {
 
         // %['json','string']=inline=list-name% - Will parse an in line list and save it
         'inline' : function(list){
+            // Find a list to save (if any)
             var list_name = list.parsed_filters[list.parsed_filters.indexOf('inline')+1];
-            var list_data = false;
 
             // Check to see if its valid JSON
             try{
-                list_data = JSON.parse(list.name);
+                var list_data = JSON.parse(list.name);
             }catch(e){
                 Rasyen.callback.on_error({
                     evt : e,
-                    msg : 'Invalid JSON',
+                    msg : 'Invalid JSON in inline filter.'
                 });
             }
 
-            if(list_data){
+            if(typeof list_data == 'object'){
                 if(typeof list_name != 'undefined'){
                     list.name = list_name;
                     Rasyen.list_load(list_name, list_data);
