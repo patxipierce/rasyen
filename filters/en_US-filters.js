@@ -273,7 +273,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
             var pn_set = false;
             for(var pn in pronouns){
                 if(!pronouns.hasOwnProperty(pn)){ continue; }
-                var pn_set = pronouns[pn];
+                pn_set = pronouns[pn];
                 for (var x = 0; x < str_parts.length; x++) {
                     found = pn_set.indexOf(str_parts[x].replace(/[^a-zA-Z]+/g, ''));
                     if(found != -1){
