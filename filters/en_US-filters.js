@@ -2,10 +2,9 @@
  *
  *   English (en_US) filters for usage with RaSyEn the Random Syntax Library.
  *
- *   global: Rasyen
- *
  **/
 
+/** global: Rasyen */
 
 if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
 
