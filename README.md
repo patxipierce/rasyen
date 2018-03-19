@@ -181,6 +181,8 @@ You can also use these callback functions to edit core functionalities.
             - Called at the end of every list parsed. Must always return the passed data.
         - `Rasyen.callback.parse_filters(data)` _function_
             - Called at the end of every filter. Must always return the passed data.
+        - `Rasyen.callback.on_error(error)` _function_
+            - Called when an error is produced to enable elegant error handling.
 
 ### Filters
 

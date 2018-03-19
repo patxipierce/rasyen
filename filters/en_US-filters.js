@@ -1,8 +1,11 @@
-/*
-*
-*   English (en_US) filters for usage with RaSyEn the Random Syntax Library.
-*
-*/
+/**
+ *
+ *   English (en_US) filters for usage with RaSyEn the Random Syntax Library.
+ *
+ *   global: Rasyen
+ *
+ **/
+
 
 if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
 
@@ -245,27 +248,34 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
             // If not in pronouns use the gender string as Name.
             // eg. "Alan was tired, Alan wanted a break."
             if(!pronouns.hasOwnProperty(gender)){
+                // This creates a new pronoun array (see the "pronouns" array)
                 pronouns[gender] = [];
-                for(var i=0; i<15; i++){
-                    var pn = gender;
-                    pn = pn.charAt(0).toUpperCase() + pn.slice(1);
-                    if(i > 9) pn = pn.toUpperCase();
+                for(var i = 0; i < 15; i++){
+                    // Capitalize
+                    var new_pn = gender
+                    new_pn = new_pn.charAt(0).toUpperCase() + new_pn.slice(1);
+                    
+                    if(i > 9){
+                        // After 9th position
+                        new_pn = new_pn.toUpperCase();
+                    }
                     if((i > 1 && i < 4)
                         || (i > 6 && i < 9)
                         || (i > 11 && i < 14)){
-                        pn = pn+"'s";
+                        // Add apostrophe where necessary
+                        new_pn = new_pn+"'s";
                     }
-                    pronouns[gender].push(pn);
+                    pronouns[gender].push(new_pn);
                 }
             }
 
             // Loop through pronouns to find the first pronoun used in the phrase
             var found;
             for(var pn in pronouns){
-                if(!pronouns.hasOwnProperty(pn)) continue;
+                if(!pronouns.hasOwnProperty(pn)){ continue; }
                 var pn_set = pronouns[pn];
-                for (var i = 0; i < str_parts.length; i++) {
-                    found = pn_set.indexOf(str_parts[i].replace(/[^a-zA-Z]+/g, ''));
+                for (var x = 0; x < str_parts.length; x++) {
+                    found = pn_set.indexOf(str_parts[x].replace(/[^a-zA-Z]+/g, ''));
                     if(found != -1){
                         break;
                     }
@@ -387,7 +397,9 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
                 chunk = parseInt( chunks[i] );
                 if( chunk ) {
                     // Split chunk into array of individual integers
-                    ints = chunks[i].split( '' ).reverse().map( parseFloat );
+                    ints = chunks[i].split( '' ).reverse().map(function(num){
+                        return parseFloat(num);
+                    });
 
                     // If tens integer is 1, i.e. 10, then add 10 to units integer
                     if( ints[1] === 1 ) {
@@ -424,7 +436,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
                 }
             }
 
-            var words = words.reverse().join( ' ' );
+            words = words.reverse().join( ' ' );
             if(words){
                 list.replace = words
             }

@@ -9,7 +9,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '2.0.1',
+    version : '2.0.2',
     lists : {},
     saved_keys : [],
     removed_items : [],
@@ -24,7 +24,8 @@ var Rasyen = {
         parse_template : function(tpl_obj){ return tpl_obj; },
         parse_tag      : function(tag_obj){ return tag_obj; },
         parse_list     : function(list_obj){ return list_obj; },
-        parse_filters  : function(list_obj){ return list_obj; }
+        parse_filters  : function(list_obj){ return list_obj; },
+        on_error       : function(err_obj){ return err_obj; }
     },
 
     // Filters: Available to the syntax engine
@@ -183,7 +184,10 @@ var Rasyen = {
             try{
                 list_data = JSON.parse(list.name);
             }catch(e){
-                console.log('Invalid JSON', list.name);
+                Rasyen.callback.on_error({
+                    evt : e,
+                    msg : 'Invalid JSON',
+                });
             }
 
             if(list_data){
@@ -270,9 +274,9 @@ var Rasyen = {
     
     // Flip object keys : values to value : keys, overtiring duplicate keys
     flip_obj : function(obj){
-        jbo = {};
+        var jbo = {};
         for(var k in obj){
-            if(!obj.hasOwnProperty(k)) continue;
+            if(!obj.hasOwnProperty(k)){ continue; }
             jbo[obj[k]] = k;
         }
         return jbo;
@@ -297,7 +301,8 @@ var Rasyen = {
 
     // Navigates arr to put rep into old_obj
     replace_in_obj : function(old_obj, rep, arr){
-        var new_obj = temp = {};
+        var new_obj = {};
+        var temp = {};
         // Convert arr to a deep object
         for (var i = 0; i < arr.length; i++) {
             if(arr.length - 1 == i){
@@ -375,8 +380,8 @@ var Rasyen = {
 
     // Loads multiple lists into RaSyEn
     lists_load : function(lists_obj){
-        for(list_name in lists_obj){
-            if(!lists_obj.hasOwnProperty(list_name)) continue;
+        for(var list_name in lists_obj){
+            if(!lists_obj.hasOwnProperty(list_name)){ continue; }
             this.list_load(list_name, lists_obj[list_name]);
         }
     },
@@ -555,8 +560,8 @@ var Rasyen = {
     lists_reset : function(){
         // Reset saved keys if any
         if(this.saved_keys.length){
-            for (var i = this.saved_keys.length - 1; i >= 0; i--) {
-                this.list_remove(this.saved_keys[i]);
+            for (var n = this.saved_keys.length - 1; n >= 0; n--) {
+                this.list_remove(this.saved_keys[n]);
             }
             this.saved_keys = [];
         }
