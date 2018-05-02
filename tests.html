@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width" />
 
-    <link rel="shortcut icon" href="http://patxipierce.com/img/favicons/favicon.ico"/>
+    <link rel="shortcut icon" href="http://patxipierce.com/assets/img/favicons/favicon.ico"/>
 
     <title>RaSyEn - Random Syntax Engine Tests</title>
 
@@ -62,7 +62,7 @@
         button { padding: 15px 0; border-radius: 4px; font-size: 140%; width: 75%; background-color: #111; color: #ddd; border: 1px solid #ddd; cursor: pointer; }
         button:hover { background-color: #444; color: #fff; }
         
-        .test-button-box { text-align: center; position: fixed; bottom: 20px; left: 0; right: 0; width: 100%; }
+        .test-button-box { text-align: center; position: fixed; bottom: 0; left: 0; right: 0; width: 100%; background-color: #111; }
         
         #list-data ul > li { list-style-type: none; }
         
@@ -134,8 +134,16 @@
 
     <section>
 
-        <h2>Tests demonstration - <span id="rasyen-version"></span></h2>
-        
+        <h2>Tests and demonstrations - <span id="rasyen-version"></span></h2>
+
+        <p>This document is intended for testing the functionality of RaSyEn as well as demonstrating its usage.</p>
+
+        <article id="list-data">
+            <h3>List data in use:</h3>
+            <p>These are the lists used in all the tests below.</p>
+            <div id="lists"></div>
+        </article>
+
         <article>
             <h3>The tests:</h3>
 
@@ -146,16 +154,12 @@
             <ul id="tests">
                 <li>
                     <h3>Callback test:</h3>
+                    <p>Every time a callback is called we add to the total count of templates, tags, lists and filters called.</p>
                     <div class="result"><p>Templates: <span id="count-templates">0</span>, Tags: <span id="count-tags">0</span>, Lists: <span id="count-lists">0</span>, Filters: <span id="count-filters">0</span>.</p></div>
                 </li>
             </ul>
         </article>
 
-        <article id="list-data">
-            <h3>List data in use:</h3>
-
-            <div id="lists"></div>
-        </article>
     </section>
 
     <footer>
@@ -281,52 +285,52 @@
             },
             "category-test" : {
                 name : "Category test",
-                description : "",
+                description : "Search for a specific property of a sub-divided list and return a value from it.",
                 template : "%geography@water% %geography@land%"
             },
             "concatenation-test" : {
                 name : "Concatenation test",
-                description : "",
-                template : "%number|digit% %geography@water|geography@land%"
+                description : "Join two lists or more and return one of the pooled results.",
+                template : "%number|digit|person% %geography@water|geography@land%"
             },
             "filter-test" : {
                 name : "Upper and Lower Case Filter test",
-                description : "",
+                description : "Apply some basic modifications to the template results.",
                 template : "%geography=to-upper=first-to-lower% %geography=to-lower=first-to-upper%"
             },
             "filter-param-test" : {
                 name : "Filter per Words test",
-                description : "",
+                description : "The words filter applied one or more filter for every word in the template.",
                 template : "%kung-fu=words=first-to-upper%"
             },
             "auto-filter-test" : {
                 name : "Automatic Filter test",
-                description : "",
+                description : "A custom filter named \"color\" has been defined to be called every time the color list is used.",
                 template : "%color%"
             },
             "filter-save-test" : {
-                name : "Filter save-result, random-category and category test (uses parameters)",
-                description : "",
+                name : "Filter save-result, random-category and category test",
+                description : "Saves a category name to a list called 'saved-key' and the uses it to retrieve a result",
                 template : "%geography=random-category=save-result=saved-key% %geography=category=saved-key%"
             },
             "mixed-save-filter-test" : {
-                name : "Save-result with several mixed lists (uses parameters)",
+                name : "Save-result with several mixed lists",
                 description : "Mix two lists and expect the result of both to be the same.",
                 template : "%geography|digit|number|=save-result=number-or-digit% == %number-or-digit%"
             },
             "filter-alone-test" : {
-                name : "Filter alone test (and including percent signs in templates)",
-                description : "",
+                name : "Filter alone test",
+                description : "Sans-list filter, and a way to include percent signs in templates.",
                 template : "%=range=2-24% &#37;"
             },
             "filter-remove-result" : {
-                name : "Remove result filter test (last one should not work, because the list only has three items)",
-                description : "",
-                template : "%number=remove-result% %number=remove-result% %number=remove-result% %number%"
+                name : "Remove result filter test",
+                description : "Results cannot be the same, because they have been removed from the list when used.",
+                template : "%number=remove-result% =/= %number=remove-result% =/= %number=remove-result%"
             },
             "tag-meta-test" : {
                 name : "Tag meta filter test",
-                description : "",
+                description : "Get a result from the animal list, and parse it again, and again until no tags are found, then add 'a' or 'an' (from en_US-filters) before the result.",
                 template : "Its %animal=meta=a-or-an%"
             },
             "filter-inline-test" : {
@@ -334,20 +338,25 @@
                 description : "A filter that requires no list but can save a list.",
                 template : "%[\"Hello\",\"Hey\",\"Greetings\"]=inline=inline-list%, said Arthur. %inline-list%, replied Guinevere."
             },
-            "plural-singular-filter-test" : {
+            "filter-plural-singular-test" : {
                 name : "Plural to singular test (en_US-filters)",
                 description : "A very simple (and not very thorough) function convert from singular to plural and back.",
                 template : "%nouns=to-plural=save-result=plu% %plu=to-singular%"
             },
-            "pronoun-swap-test" : {
+            "filter-pronoun-swap-test" : {
                 name : "Pronoun swap test (en_US-filters)",
                 description : "Searches for the first pronoun in a phrase and changes to a designated pronoun in an entire phrase.",
                 template : "\"%opinion=save-result=op%\" + \"%pronoun|person|=save-result=pn%\" = \"%op=pronoun-swap=pn%\""
             },
-            "number-to-words-test" : {
+            "filter-number-to-words-test" : {
                 name : "Number to Words test (en_US-filters)",
                 description : "Converts digits (up to 10^303) to their word equivalent.",
                 template : "%=range=100-10000=save-result=n% = %n=number-to-words%"
+            },
+            "filter-quiet-test" : {
+                name : "Test the quiet filer",
+                description : "Will output nothing but still parse any filters before the quiet filter was called.",
+                template : "%geography=save-result=n=quiet% %n%"
             }
         };
     }
@@ -366,10 +375,15 @@
             var li = document.createElement('li');
             li.id = tpl;
             
-            // Title div
+            // Title h3
             var h3 = document.createElement('h3');
             h3.innerHTML = templates[tpl].name;
             li.appendChild(h3);
+
+            // description p
+            var p = document.createElement('p');
+            p.innerHTML = templates[tpl].description;
+            li.appendChild(p);
 
             // Template div
             var div_template = document.createElement('div');

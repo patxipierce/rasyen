@@ -9,7 +9,7 @@ var Rasyen = {
     /*
     *   Object variables
     */
-    version : '2.0.2',
+    version : '2.0.3',
     lists : {},
     saved_keys : [],
     removed_items : [],
@@ -41,7 +41,7 @@ var Rasyen = {
         // %list-name=first-to-lower% - Lower the first letter
         'first-to-lower' : function(list) {
             if(typeof list.replace === 'string' && list.replace !== ''){ 
-                list.replace = list.replace.charAt(0).toLowerCase() + list.replace.slice(1)
+                list.replace = list.replace.charAt(0).toLowerCase() + list.replace.slice(1);
             }
             return list;
         },
@@ -109,9 +109,7 @@ var Rasyen = {
 
         // %list-name=random-category% - Chooses a Key from the list (must be an object)
         'random-category' : function(list) {
-            if(Rasyen.lists.hasOwnProperty(list.name) 
-                && Rasyen.lists[list.name] instanceof Object
-                && Object.keys(Rasyen.lists[list.name]).length > 0){
+            if(Rasyen.lists.hasOwnProperty(list.name) && Rasyen.lists[list.name] instanceof Object && Object.keys(Rasyen.lists[list.name]).length > 0){
                 
                 var obj = Rasyen.lists[list.name];
                 if(list.categories){
@@ -179,10 +177,11 @@ var Rasyen = {
         'inline' : function(list){
             // Find a list to save (if any)
             var list_name = list.parsed_filters[list.parsed_filters.indexOf('inline')+1];
+                        var list_data;
 
             // Check to see if its valid JSON
             try{
-                var list_data = JSON.parse(list.name);
+                list_data = JSON.parse(list.name);
             }catch(e){
                 Rasyen.callback.on_error({
                     evt : e,
@@ -195,8 +194,14 @@ var Rasyen = {
                     list.name = list_name;
                     Rasyen.list_load(list_name, list_data);
                 }
-                list.replace = Rasyen.random_str(list_data)
+                list.replace = Rasyen.random_str(list_data);
             }
+            return list;
+        },
+
+        // %list=save-result=new-list=quiet% - Will quietly parse the template but return nothing
+        'quiet' : function(list){
+            list.replace = '';
             return list;
         }
     },
@@ -208,8 +213,7 @@ var Rasyen = {
     // returns max and min inclusive random number
     random_range : function(min, max){
         var int = min;
-        if( this.options.use_window_crypto 
-            && typeof window.crypto == 'object'){
+        if( this.options.use_window_crypto && typeof window.crypto == 'object'){
             // Soooper cool random generation.
             var range = (max + 1) - min;
             var requestBytes = Math.ceil(Math.log2(range) / 8);
@@ -287,8 +291,7 @@ var Rasyen = {
         for(var i = 1; i < arguments.length; i++) {
             for(var key in arguments[i]) {
                 if(arguments[i].hasOwnProperty(key)) { 
-                    if (typeof arguments[0][key] === 'object'
-                    && typeof arguments[i][key] === 'object'){
+                    if (typeof arguments[0][key] === 'object' && typeof arguments[i][key] === 'object'){
                         this.extend_obj(arguments[0][key], arguments[i][key]);
                     }else{
                         arguments[0][key] = arguments[i][key];
@@ -306,9 +309,9 @@ var Rasyen = {
         // Convert arr to a deep object
         for (var i = 0; i < arr.length; i++) {
             if(arr.length - 1 == i){
-                temp = temp[arr[i]] = rep
+                temp = temp[arr[i]] = rep;
             }else{
-                temp = temp[arr[i]] = {}
+                temp = temp[arr[i]] = {};
             }
         }
         // Merge with original object
@@ -340,20 +343,18 @@ var Rasyen = {
                 data = this.lists[list_name];
             }
 
-            if(data instanceof Array){
-                var pos = data.indexOf(str);
-                if(pos != -1) {
-                    // Remove item
-                    data.splice(pos, 1);
+            var pos = data.indexOf(str);
+            if(data instanceof Array && pos != -1) {
+                // Remove item
+                data.splice(pos, 1);
 
-                    // save item to re-insert it later
-                    Rasyen.removed_items.push({
-                        'path' : arr,
-                        'str'  : str,
-                        'pos'  : pos,
-                        'list_name' : list_name
-                    });
-                }
+                // save item to re-insert it later
+                Rasyen.removed_items.push({
+                    'path' : arr,
+                    'str'  : str,
+                    'pos'  : pos,
+                    'list_name' : list_name
+                });
             }
 
             if(do_rebuild){
@@ -424,7 +425,9 @@ var Rasyen = {
                 var fn = list.parsed_filters[n];
                 if(typeof this.filters[fn] === 'function'){
                     // Call filter
-                    list = this.callback.parse_filters(this.filters[fn](list));
+                    list = this.filters[fn](list);
+                    // Callback
+                    list = this.callback.parse_filters(list);
                 }
             }
         }
@@ -487,14 +490,14 @@ var Rasyen = {
 
         // Array with lists in tag
         var list_tags = cmd.split('|');
-        var output = [];
+        var result_pool = [];
         for (var i = 0; i < list_tags.length; i++) {
             var list = this.parse_list(list_tags[i]);
             
             // output on every iteration because of filters
-            if(list.replace){
-                output.push(list.replace);
-                tag_obj.output = this.rai(output);
+            if(list.replace || list.replace === ''){
+                result_pool.push(list.replace);
+                tag_obj.output = this.rai(result_pool);
             }
             var fst = list_tags[i].charAt(0);
             if( fst == '=' || fst == '[' || fst == '{'){
@@ -539,7 +542,7 @@ var Rasyen = {
     parse : function(tpl){
         
         var parsed_tpl = this.parse_template(tpl);
-        
+
         // After parsing the template proceed to replace its tags
         if(parsed_tpl.hasOwnProperty('parsed_tags')){
             for (var i = 0; i < parsed_tpl.parsed_tags.length; i++) {
@@ -582,4 +585,4 @@ var Rasyen = {
             this.removed_items = [];
         }
     }
-}
+};

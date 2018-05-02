@@ -30,33 +30,42 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
     - [Custom filters](#custom-filters)
     - [Per list filters](#per-list-filters)
     - [Sans-list filters](#sans-list-filters)
-    - [Filter nesting](#filter-nesting)
 
 The most basic usage of RaSyEn could look like this.
 
 ```js
-// Load (list name, Array or Object)
-Rasyen.list_load("first-part", [
-    "Ae","Ara","Bal","Ylla","Zin","Zyl"
-]);
+Rasyen.list_load("plants", ["violets"]);
 
-Rasyen.list_load("second-part", [
-    "balar","can","yra","zorwyn","zumin"
-]);
+alert(Rasyen.parse("Daisy likes %plants%"));
+// → "Daisy likes %plants%"
+```
+
+And here is an example combining random words to generate a name.
+
+```js
+// Load (list name, Array or Object)
+Rasyen.lists_load({
+    "first" : [
+        "Ae","Ara","Bal","Ylla","Zin","Zyl"
+    ],
+    "second" : [
+        "balar","can","yra","zorwyn","zumin"
+    ]
+});
 
 // Templates use tags like %list-name% to produce random output.
-var template = "Your elf name is %first-part%-%second-part%.";
+var template = "Your elf name is %first%%second%.";
 
 // Parse the template
 var out = Rasyen.parse(template); 
-// → "Your elf name is Ara-yra."
+// → "Your elf name is Arayra."
 ```
 
 Or consider this other example:
 
 ```js
 // Load a "story list"
-Rasyen.list_load("story", {
+Rasyen.lists_load("story", {
     "name"   : [
         "Ben",
         "Jasper",
@@ -105,9 +114,25 @@ Templates are strings fed into the parser, who will look for _tags_, parts of th
 
 With that in mind you can create templates with tags such as: 
 
-`%list-a@category|list-b@category=filter-1=filter-2=filter-n%`.
+`%list%`
 
-Easy peasy.
+That returns a random string from `list`, or you can modify the output using a filter named `filter`, like this:
+
+`%list=filter%`.
+
+Easy-peasy. You could also descend into a `category` of the list and then modify the result with a filter:
+
+`%list@category=filter%`.
+
+What if you want a random result from two lists? Try this:
+
+`%list-a|list-b%`.
+
+... Or combine `list-a` with a category from `list-b` and then pass the result through `filter-1` and `filter-2`.
+
+`%list-a|list-b@category=filter-1=filter-2%`.
+
+It gets better, you can [save a category name and apply it to another list](#category-filter), or you can create [lists which contain templates](#the-meta-filter) to further randomize things.
 
 ### Methods
 
@@ -214,6 +239,8 @@ Pre-built filters are:
     - Evaluates the tag again to check for more tags in the result string.
 - `=inline`
     - Will attempt to parse any JSON set before it and return a random result. It can also save the parsed JSON to a list if a second argument is provided.
+- `=quiet`
+    - Will quietly parse any filters before, but not output anything on the template.
 
 English Filters:
 
@@ -445,7 +472,7 @@ Rasyen.lists_load({
         "he",
         "she"
     ],
-    "adjective" : {
+    "preposition" : {
         "he" : "him",
         "she" : "her"
     },
@@ -487,7 +514,7 @@ var template = [
     "and plotted with %name=category=t2=save-result=n4%",
     // → "and plotted with Morgana"
 
-    "to forsake %adjective=category=t1%."
+    "to forsake %preposition=category=t1%."
     // → "to forsake him."
 ];
 
@@ -495,8 +522,6 @@ var template = [
 
 var out = Rasyen.parse(template.join(" "));
 ```
-
-
 
 In essence you now have four characters `n1`, `n2`, `n3` and `n4`, which you can use to add continuity to the narration. `n1` and `n3` are the same gender, and `n2` and `n4` are plotting against `n1`
 
@@ -582,13 +607,15 @@ Rasyen.filters['color'] = function(list){
     if(typeof Rasyen.lists['color'] !== 'undefined'){
         // Get the full list apply categories and select an array
         var color_list = Rasyen.lists['color'];
-        var col_cat    = Rasyen.roi(color_list);
+        var color_cat    = Rasyen.roi(color_list);
         
         if(list.categories){
-            col_cat = Rasyen.navigate_obj(color_list, list.categories);
+            // search color_list with list.categories for the color category
+            color_cat = Rasyen.navigate_obj(color_list, list.categories);
         }
         
-        var col = Rasyen.rai(col_cat);
+        // Get a random array item from color_cat
+        var col = Rasyen.rai(color_cat);
         
         // Add the color to the word.
         list.replace = '<span style="color:'+col[1]+'">'+col[0]+'</span>';
@@ -602,7 +629,7 @@ var out = Rasyen.parse("%color%");
 
 ### Sans-list Filters
 
-Filters don't necessarily have to come after a list name. For example:
+Filters don't necessarily have to come after a list name, you can also have a tag with a filter and no list. For example:
 
 ```js
 

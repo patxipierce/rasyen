@@ -258,6 +258,7 @@ if(typeof Rasyen != 'undefined'){ // Make sure Rasyen is loaded
                         // After 9th position
                         new_pn = new_pn.toUpperCase();
                     }
+
                     if((i > 1 && i < 4)
                         || (i > 6 && i < 9)
                         || (i > 11 && i < 14)){
