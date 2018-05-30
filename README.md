@@ -10,7 +10,7 @@ __________          _________      ___________
 
 ## RaSyEn - Random Syntax Engine v.2.0.2
 
-Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select from randomly and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data in any format you like. And leave the random parsing to a simple template.
+Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select a string randomly from a object or array and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data and leave the random parsing to a simple template.
 
 **Contents:**
 
