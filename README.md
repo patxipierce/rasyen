@@ -34,7 +34,7 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
 The most basic usage of RaSyEn could look like this.
 
 ```js
-Rasyen.list_load("flowers", ["violets roses forget-me-nots"].split(" "));
+Rasyen.list_load("flowers", "violets roses forget-me-nots".split(" "));
 
 alert(Rasyen.parse("Daisy likes %flowers%."));
 // → "Daisy likes violets."
