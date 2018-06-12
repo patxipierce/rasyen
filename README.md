@@ -10,7 +10,7 @@ __________          _________      ___________
 
 ## RaSyEn - Random Syntax Engine v.2.0.2
 
-Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select a string randomly from a object or array and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data and leave the random parsing to a simple template.
+Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to select a string randomly from an object or array and a template to do the replacements on. This effectively separates the data from template allowing you to store lists of data and leave the random parsing to a simple template.
 
 **Contents:**
 
@@ -34,10 +34,10 @@ Rasyen (pronounced /ˈɹeɪzn/ like the dried grape) uses a list of options to s
 The most basic usage of RaSyEn could look like this.
 
 ```js
-Rasyen.list_load("plants", ["violets"]);
+Rasyen.list_load("flowers", ["violets roses forget-me-nots"].split(" "));
 
-alert(Rasyen.parse("Daisy likes %plants%"));
-// → "Daisy likes %plants%"
+alert(Rasyen.parse("Daisy likes %flowers%."));
+// → "Daisy likes violets."
 ```
 
 And here is an example combining random words to generate a name.
